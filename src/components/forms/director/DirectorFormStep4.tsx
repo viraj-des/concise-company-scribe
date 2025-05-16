@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Director, EntityInterest } from "@/types";
+import { Designation, Director, EntityInterest } from "@/types";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash } from "lucide-react";
@@ -60,9 +60,16 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
   const hasInterest = form.watch("hasInterestInOtherEntities");
 
   const addEntity = (data: EntityInterestFormData) => {
+    // Ensure all required fields are present and properly typed
     const newEntity: EntityInterest = {
-      ...data,
       id: Date.now().toString(),
+      entityName: data.entityName,
+      registrationNumber: data.registrationNumber,
+      designation: data.designation as Designation,
+      dateOfAppointment: data.dateOfAppointment,
+      dateOfCessation: data.dateOfCessation,
+      shareholdingPercentage: data.shareholdingPercentage,
+      shareholdingAmount: data.shareholdingAmount,
     };
     
     setEntities([...entities, newEntity]);

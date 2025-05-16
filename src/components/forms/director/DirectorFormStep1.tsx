@@ -26,13 +26,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Director } from "@/types";
+import { Designation, DesignationCategory, DesignationSubcategory, Director, Prefix } from "@/types";
 
 type FormData = z.infer<typeof directorStep1Schema>;
 
 interface DirectorFormStep1Props {
   onNext: (data: Partial<Director>) => void;
-  defaultValues?: Partial<FormData>;
+  defaultValues?: Partial<Director>;
 }
 
 const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Props) => {
@@ -59,7 +59,26 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
   });
 
   const handleSubmit = (data: FormData) => {
-    onNext(data);
+    // Type casting data to the correct type
+    const directorData: Partial<Director> = {
+      designation: data.designation as Designation,
+      designationCategory: data.designationCategory as DesignationCategory,
+      designationSubcategory: data.designationSubcategory as DesignationSubcategory,
+      din: data.din,
+      prefix: data.prefix as Prefix,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      fatherName: data.fatherName,
+      occupation: data.occupation,
+      dateOfBirth: data.dateOfBirth,
+      nationality: data.nationality,
+      dateOfAppointment: data.dateOfAppointment,
+      dateOfCessation: data.dateOfCessation,
+      membershipNumber: data.membershipNumber,
+      practiceNumber: data.practiceNumber,
+    };
+    onNext(directorData);
   };
 
   return (
