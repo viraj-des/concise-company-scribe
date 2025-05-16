@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,12 +23,21 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Director } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { database } from "@/services/database";
 
-// Start with an empty directors array
 const DirectorList = () => {
   const [directors, setDirectors] = useState<Director[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    // Load directors from database
+    const loadDirectors = () => {
+      const data = database.getDirectors();
+      setDirectors(data);
+    };
+
+    loadDirectors();
+  }, []);
 
   // Filter directors based on search term
   const filteredDirectors = directors.filter(
@@ -36,6 +46,13 @@ const DirectorList = () => {
       director.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       director.din.includes(searchTerm)
   );
+
+  const handleDeleteDirector = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this director?")) {
+      database.deleteDirector(id);
+      setDirectors(database.getDirectors());
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -109,7 +126,12 @@ const DirectorList = () => {
                         <Button variant="outline" size="icon">
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="icon" className="text-red-500 hover:text-red-600">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() => handleDeleteDirector(director.id || "")}
+                        >
                           <Trash className="h-4 w-4" />
                         </Button>
                       </div>

@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,11 +23,21 @@ import {
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Company } from "@/types";
-import { useState } from "react";
+import { database } from "@/services/database";
 
 const CompanyList = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    // Load companies from database
+    const loadCompanies = () => {
+      const data = database.getCompanies();
+      setCompanies(data);
+    };
+
+    loadCompanies();
+  }, []);
 
   // Filter companies based on search term
   const filteredCompanies = companies.filter(
@@ -34,6 +45,13 @@ const CompanyList = () => {
       company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       company.cin.includes(searchTerm)
   );
+
+  const handleDeleteCompany = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this company?")) {
+      database.deleteCompany(id);
+      setCompanies(database.getCompanies());
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -100,7 +118,12 @@ const CompanyList = () => {
                         <Button variant="outline" size="icon">
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="icon" className="text-red-500 hover:text-red-600">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() => handleDeleteCompany(company.id || "")}
+                        >
                           <Trash className="h-4 w-4" />
                         </Button>
                       </div>

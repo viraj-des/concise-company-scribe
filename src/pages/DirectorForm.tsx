@@ -5,11 +5,12 @@ import Stepper from "@/components/common/Stepper";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Director } from "@/types";
-import { toast } from "sonner";
 import DirectorFormStep1 from "@/components/forms/director/DirectorFormStep1";
 import DirectorFormStep2 from "@/components/forms/director/DirectorFormStep2";
 import DirectorFormStep3 from "@/components/forms/director/DirectorFormStep3";
 import DirectorFormStep4 from "@/components/forms/director/DirectorFormStep4";
+import DirectorFormStep5 from "@/components/forms/director/DirectorFormStep5";
+import { database } from "@/services/database";
 
 const steps = [
   "Personal Details",
@@ -45,8 +46,8 @@ const DirectorForm = () => {
 
   const handleSubmit = (data: Partial<Director>) => {
     console.log("Submitting director data:", data);
-    // In a real application, you would send this data to the backend
-    toast.success("Director created successfully!");
+    // Save to database
+    database.createDirector(data);
     navigate("/directors");
   };
 
@@ -87,28 +88,11 @@ const DirectorForm = () => {
       )}
 
       {currentStep === 5 && (
-        <Card className="p-6 mt-6">
-          <div className="text-center py-10">
-            <h2 className="text-xl font-semibold mb-4">Almost Done!</h2>
-            <p className="mb-6 text-gray-600">
-              Review all the information and submit to create the director.
-            </p>
-            <div className="flex justify-between mt-6">
-              <button 
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                onClick={handleBack}
-              >
-                Back
-              </button>
-              <button
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-700"
-                onClick={() => handleSubmit(formData)}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </Card>
+        <DirectorFormStep5
+          onNext={handleNext}
+          onBack={handleBack}
+          defaultValues={formData}
+        />
       )}
     </DashboardLayout>
   );

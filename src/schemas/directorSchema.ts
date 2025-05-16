@@ -75,7 +75,7 @@ export const directorStep3Schema = z.object({
 });
 
 // Step 4: Entity Interests
-// Make sure all required fields in EntityInterest interface are also required here
+// All required fields in EntityInterest interface must also be required here
 export const entityInterestSchema = z.object({
   entityName: z.string().min(1, "Entity name is required"),
   registrationNumber: z.string().min(1, "Registration number is required"),
