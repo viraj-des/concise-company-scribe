@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { companyStep5Schema } from "@/schemas/companySchema";
@@ -19,12 +18,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Company } from "@/types";
 
 type FormData = z.infer<typeof companyStep5Schema>;
 
 interface CompanyFormStep5Props {
-  onNext: (data: Partial<Company>) => void;
+  onNext: (data: FormData) => void;
   onBack: () => void;
   defaultValues?: Partial<FormData>;
 }
@@ -44,24 +42,7 @@ const CompanyFormStep5 = ({ onNext, onBack, defaultValues = {} }: CompanyFormSte
   });
 
   const handleSubmit = (data: FormData) => {
-    const registrations = {
-      pan: data.pan,
-      panFileUrl: data.panFileUrl,
-      tan: data.tan,
-      tanFileUrl: data.tanFileUrl,
-      esic: data.esic,
-      esicFileUrl: data.esicFileUrl,
-      epf: data.epf,
-      epfFileUrl: data.epfFileUrl,
-      pt: data.pt,
-      ptFileUrl: data.ptFileUrl,
-      gst: data.gst,
-      gstFileUrl: data.gstFileUrl,
-      isin: data.isin,
-      isinFileUrl: data.isinFileUrl,
-    };
-    
-    onNext({ registrations });
+    onNext(data);
   };
 
   return (

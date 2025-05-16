@@ -89,9 +89,45 @@ const CompanyForm = () => {
 
       {currentStep === 5 && (
         <CompanyFormStep5
-          onNext={handleNext}
+          onNext={(formStepData) => {
+            // Here's the fix - transform the form data into the expected Company structure
+            const registrationData = {
+              registrations: {
+                pan: formStepData.pan,
+                panFileUrl: formStepData.panFileUrl,
+                tan: formStepData.tan,
+                tanFileUrl: formStepData.tanFileUrl,
+                esic: formStepData.esic,
+                esicFileUrl: formStepData.esicFileUrl,
+                epf: formStepData.epf,
+                epfFileUrl: formStepData.epfFileUrl,
+                pt: formStepData.pt,
+                ptFileUrl: formStepData.ptFileUrl,
+                gst: formStepData.gst,
+                gstFileUrl: formStepData.gstFileUrl,
+                isin: formStepData.isin,
+                isinFileUrl: formStepData.isinFileUrl,
+              }
+            };
+            handleNext(registrationData);
+          }}
           onBack={handleBack}
-          defaultValues={formData}
+          defaultValues={{
+            pan: formData.registrations?.pan || "",
+            panFileUrl: formData.registrations?.panFileUrl || "",
+            tan: formData.registrations?.tan || "",
+            tanFileUrl: formData.registrations?.tanFileUrl || "",
+            esic: formData.registrations?.esic || "",
+            esicFileUrl: formData.registrations?.esicFileUrl || "",
+            epf: formData.registrations?.epf || "",
+            epfFileUrl: formData.registrations?.epfFileUrl || "",
+            pt: formData.registrations?.pt || "",
+            ptFileUrl: formData.registrations?.ptFileUrl || "",
+            gst: formData.registrations?.gst || "",
+            gstFileUrl: formData.registrations?.gstFileUrl || "",
+            isin: formData.registrations?.isin || "",
+            isinFileUrl: formData.registrations?.isinFileUrl || "",
+          }}
         />
       )}
     </DashboardLayout>
