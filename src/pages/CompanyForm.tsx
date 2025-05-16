@@ -7,6 +7,7 @@ import CompanyFormStep1 from "@/components/forms/company/CompanyFormStep1";
 import { Card } from "@/components/ui/card";
 import { Company } from "@/types";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const steps = [
   "Company Info",
@@ -47,13 +48,11 @@ const CompanyForm = () => {
     navigate("/companies");
   };
 
-  // For now, we'll just render the first step
-  // In a complete implementation, you'd add the other steps as well
   return (
     <DashboardLayout>
       <h1 className="text-2xl font-bold mb-6">Add New Company</h1>
 
-      <Card className="p-6">
+      <Card className="p-6 mb-6">
         <Stepper steps={steps} currentStep={currentStep} />
       </Card>
 
@@ -61,7 +60,29 @@ const CompanyForm = () => {
         <CompanyFormStep1 onNext={handleNext} defaultValues={formData} />
       )}
 
-      {/* The other steps would be added here */}
+      {/* For steps 2-5, show placeholder cards for now */}
+      {currentStep > 1 && currentStep <= steps.length && (
+        <Card className="p-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">{steps[currentStep - 1]}</h2>
+          <p className="mb-6 text-gray-600">
+            This step is under development. For now, you can navigate through the form.
+          </p>
+          <div className="flex justify-between mt-6">
+            <Button variant="outline" onClick={handleBack}>
+              Back
+            </Button>
+            {currentStep < steps.length ? (
+              <Button onClick={() => handleNext({})}>
+                Next
+              </Button>
+            ) : (
+              <Button onClick={() => handleSubmit(formData)}>
+                Submit
+              </Button>
+            )}
+          </div>
+        </Card>
+      )}
     </DashboardLayout>
   );
 };

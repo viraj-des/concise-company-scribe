@@ -6,7 +6,10 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Director } from "@/types";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import DirectorFormStep1 from "@/components/forms/director/DirectorFormStep1";
+import DirectorFormStep2 from "@/components/forms/director/DirectorFormStep2";
+import DirectorFormStep3 from "@/components/forms/director/DirectorFormStep3";
+import DirectorFormStep4 from "@/components/forms/director/DirectorFormStep4";
 
 const steps = [
   "Personal Details",
@@ -55,25 +58,58 @@ const DirectorForm = () => {
         <Stepper steps={steps} currentStep={currentStep} />
       </Card>
 
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-6">Coming Soon</h2>
-        <p className="mb-6 text-gray-600">
-          The director form implementation is in progress. In the final application, this form will include all the required fields for director management as per the specification.
-        </p>
-        
-        <div className="flex justify-between mt-6">
-          {currentStep > 1 && (
-            <Button variant="outline" onClick={handleBack}>
-              Back
-            </Button>
-          )}
-          <div className="ml-auto">
-            <Button onClick={() => navigate("/directors")}>
-              Return to Directors
-            </Button>
+      {currentStep === 1 && (
+        <DirectorFormStep1 onNext={handleNext} defaultValues={formData} />
+      )}
+
+      {currentStep === 2 && (
+        <DirectorFormStep2 
+          onNext={handleNext}
+          onBack={handleBack}
+          defaultValues={formData} 
+        />
+      )}
+
+      {currentStep === 3 && (
+        <DirectorFormStep3
+          onNext={handleNext}
+          onBack={handleBack}
+          defaultValues={formData}
+        />
+      )}
+
+      {currentStep === 4 && (
+        <DirectorFormStep4
+          onNext={handleNext}
+          onBack={handleBack} 
+          defaultValues={formData}
+        />
+      )}
+
+      {currentStep === 5 && (
+        <Card className="p-6 mt-6">
+          <div className="text-center py-10">
+            <h2 className="text-xl font-semibold mb-4">Almost Done!</h2>
+            <p className="mb-6 text-gray-600">
+              Review all the information and submit to create the director.
+            </p>
+            <div className="flex justify-between mt-6">
+              <button 
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                onClick={handleBack}
+              >
+                Back
+              </button>
+              <button
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-700"
+                onClick={() => handleSubmit(formData)}
+              >
+                Submit
+              </button>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      )}
     </DashboardLayout>
   );
 };

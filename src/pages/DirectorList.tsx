@@ -22,102 +22,21 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Director } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 
-// Mock directors data
-const mockDirectors: Director[] = [
-  {
-    id: "1",
-    designation: "Managing Director",
-    designationCategory: "Professional",
-    designationSubcategory: "Executive Director",
-    din: "00123456",
-    prefix: "Mr",
-    firstName: "Rajesh",
-    lastName: "Kumar",
-    fatherName: "Ramesh Kumar",
-    presentAddress: "123 Main Street, Mumbai",
-    presentCountry: "India",
-    presentState: "Maharashtra",
-    presentCity: "Mumbai",
-    presentPinCode: "400001",
-    isPermanentSameAsPresent: true,
-    email: "rajesh.kumar@example.com",
-    phoneNumber: "9876543210",
-    pan: "ABCPK1234D",
-    occupation: "Business",
-    dateOfBirth: "1980-05-15",
-    nationality: "Indian",
-    dateOfAppointment: "2020-01-01",
-    hasInterestInOtherEntities: false
-  },
-  {
-    id: "2",
-    designation: "Chief Financial Officer",
-    designationCategory: "Professional",
-    designationSubcategory: "Executive Director",
-    din: "00789012",
-    prefix: "Mrs",
-    firstName: "Priya",
-    lastName: "Sharma",
-    fatherName: "Vikram Sharma",
-    presentAddress: "456 Park Avenue, Delhi",
-    presentCountry: "India",
-    presentState: "Delhi",
-    presentCity: "New Delhi",
-    presentPinCode: "110001",
-    isPermanentSameAsPresent: true,
-    email: "priya.sharma@example.com",
-    phoneNumber: "8765432109",
-    pan: "DEFPS5678E",
-    occupation: "Chartered Accountant",
-    dateOfBirth: "1985-08-22",
-    nationality: "Indian",
-    dateOfAppointment: "2020-02-15",
-    hasInterestInOtherEntities: false
-  },
-  {
-    id: "3",
-    designation: "Director",
-    designationCategory: "Independent",
-    designationSubcategory: "Non-Executive Director",
-    din: "00345678",
-    prefix: "Mr",
-    firstName: "Arun",
-    lastName: "Patel",
-    fatherName: "Suresh Patel",
-    presentAddress: "789 Corporate Park, Bangalore",
-    presentCountry: "India",
-    presentState: "Karnataka",
-    presentCity: "Bangalore",
-    presentPinCode: "560001",
-    isPermanentSameAsPresent: false,
-    permanentAddress: "101 Residence Colony, Chennai",
-    permanentCountry: "India",
-    permanentState: "Tamil Nadu",
-    permanentCity: "Chennai",
-    permanentPinCode: "600001",
-    email: "arun.patel@example.com",
-    phoneNumber: "7654321098",
-    pan: "GHIAP9012F",
-    occupation: "Professor",
-    dateOfBirth: "1975-12-10",
-    nationality: "Indian",
-    dateOfAppointment: "2020-03-20",
-    hasInterestInOtherEntities: true,
-    otherEntities: [
-      {
-        entityName: "XYZ Consultants Ltd",
-        registrationNumber: "U98765KA2015PTC654321",
-        designation: "Director",
-        dateOfAppointment: "2018-05-10",
-        shareholdingPercentage: 5,
-        shareholdingAmount: 500000
-      }
-    ]
-  }
-];
-
+// Start with an empty directors array
 const DirectorList = () => {
+  const [directors, setDirectors] = useState<Director[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filter directors based on search term
+  const filteredDirectors = directors.filter(
+    (director) => 
+      director.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      director.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      director.din.includes(searchTerm)
+  );
+
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-6">
@@ -138,6 +57,8 @@ const DirectorList = () => {
               <Input 
                 placeholder="Search directors..." 
                 className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
@@ -155,45 +76,53 @@ const DirectorList = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockDirectors.map((director) => (
-                <TableRow key={director.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-2 text-primary" />
-                      {director.prefix} {director.firstName} {director.lastName}
-                    </div>
-                  </TableCell>
-                  <TableCell>{director.din}</TableCell>
-                  <TableCell>{director.designation}</TableCell>
-                  <TableCell>
-                    <Badge variant={
-                      director.designationCategory === 'Independent' 
-                        ? 'default' 
-                        : director.designationCategory === 'Promoter'
-                          ? 'secondary'
-                          : 'outline'
-                    }>
-                      {director.designationCategory}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(director.dateOfAppointment).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
-                      <Button variant="outline" size="icon">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="icon">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="text-red-500 hover:text-red-600">
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
+              {filteredDirectors.length > 0 ? (
+                filteredDirectors.map((director) => (
+                  <TableRow key={director.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center">
+                        <User className="h-4 w-4 mr-2 text-primary" />
+                        {director.prefix} {director.firstName} {director.lastName}
+                      </div>
+                    </TableCell>
+                    <TableCell>{director.din}</TableCell>
+                    <TableCell>{director.designation}</TableCell>
+                    <TableCell>
+                      <Badge variant={
+                        director.designationCategory === 'Independent' 
+                          ? 'default' 
+                          : director.designationCategory === 'Promoter'
+                            ? 'secondary'
+                            : 'outline'
+                      }>
+                        {director.designationCategory}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(director.dateOfAppointment).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" size="icon">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="text-red-500 hover:text-red-600">
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                    No directors found. Add a new director to get started.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>
