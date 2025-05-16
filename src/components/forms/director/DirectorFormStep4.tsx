@@ -31,17 +31,22 @@ type EntityInterestFormData = z.infer<typeof entityInterestSchema>;
 interface DirectorFormStep4Props {
   onNext: (data: Partial<Director>) => void;
   onBack: () => void;
-  defaultValues?: Partial<FormData>;
+  defaultValues?: Partial<Director>;
 }
 
 const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormStep4Props) => {
-  const [entities, setEntities] = useState<EntityInterest[]>(defaultValues.otherEntities || []);
+  // Initialize entities with properly typed default values
+  const [entities, setEntities] = useState<EntityInterest[]>(
+    Array.isArray(defaultValues.otherEntities) 
+      ? defaultValues.otherEntities as EntityInterest[] 
+      : []
+  );
 
   const form = useForm<FormData>({
     resolver: zodResolver(directorStep4Schema),
     defaultValues: {
       hasInterestInOtherEntities: defaultValues.hasInterestInOtherEntities || false,
-      otherEntities: defaultValues.otherEntities || [],
+      otherEntities: entities,
     },
   });
 
@@ -81,7 +86,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
   };
 
   const handleSubmit = () => {
-    form.setValue("otherEntities", entities);
+    // Using the entities state directly instead of form.getValue("otherEntities")
     onNext({
       hasInterestInOtherEntities: form.getValues("hasInterestInOtherEntities"),
       otherEntities: entities

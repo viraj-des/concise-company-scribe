@@ -77,7 +77,9 @@ export type Designation =
   | 'Whole Time Director'
   | 'Manager'
   | 'Directors appointed in Casual Vacancy'
-  | 'Other';
+  | 'Other'
+  | 'Partner'  // Added for entity interests
+  | 'Proprietor'; // Added for entity interests
 
 export type DesignationCategory = 'Independent' | 'Promoter' | 'Professional';
 export type DesignationSubcategory = 'Chairman' | 'Executive Director' | 'Non-Executive Director';
