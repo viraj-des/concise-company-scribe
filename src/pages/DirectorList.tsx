@@ -77,7 +77,7 @@ const mockDirectors: Director[] = [
   },
   {
     id: "3",
-    designation: "Independent Director",
+    designation: "Director",
     designationCategory: "Independent",
     designationSubcategory: "Non-Executive Director",
     din: "00345678",
