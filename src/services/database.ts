@@ -1,3 +1,4 @@
+
 import { Company, Director } from "@/types";
 import { v4 as uuid } from 'uuid';
 import { toast } from "sonner";
@@ -6,6 +7,7 @@ import { toast } from "sonner";
 // For now, we'll use localStorage for persistence
 const COMPANIES_STORAGE_KEY = "corporate-registry-companies";
 const DIRECTORS_STORAGE_KEY = "corporate-registry-directors";
+const AUDITS_STORAGE_KEY = "corporate-registry-audits";
 
 const loadFromStorage = <T>(key: string): T[] => {
   try {
@@ -146,56 +148,114 @@ const deleteDirector = (id: string): boolean => {
   return false;
 };
 
+// Audit CRUD operations
+const getAudits = (): any[] => {
+  return loadFromStorage(AUDITS_STORAGE_KEY);
+};
+
+const getAuditById = (id: string): any | undefined => {
+  const audits = getAudits();
+  return audits.find(audit => audit.id === id);
+};
+
+const createAudit = (auditData: any): any => {
+  const audits = getAudits();
+  
+  const newAudit = {
+    ...auditData,
+    id: uuid(),
+  };
+  
+  audits.push(newAudit);
+  saveToStorage(AUDITS_STORAGE_KEY, audits);
+  toast.success("Audit created successfully");
+  
+  return newAudit;
+};
+
+const updateAudit = (id: string, updateData: any): any | undefined => {
+  const audits = getAudits();
+  const index = audits.findIndex(audit => audit.id === id);
+  
+  if (index !== -1) {
+    const updatedAudit = { ...audits[index], ...updateData };
+    audits[index] = updatedAudit;
+    saveToStorage(AUDITS_STORAGE_KEY, audits);
+    toast.success("Audit updated successfully");
+    return updatedAudit;
+  }
+  
+  toast.error("Audit not found");
+  return undefined;
+};
+
+const deleteAudit = (id: string): boolean => {
+  const audits = getAudits();
+  const filteredAudits = audits.filter(audit => audit.id !== id);
+  
+  if (filteredAudits.length < audits.length) {
+    saveToStorage(AUDITS_STORAGE_KEY, filteredAudits);
+    toast.success("Audit deleted successfully");
+    return true;
+  }
+  
+  toast.error("Audit not found");
+  return false;
+};
+
 // Clear all data (for testing)
 const clearAllData = (): void => {
   localStorage.removeItem(COMPANIES_STORAGE_KEY);
   localStorage.removeItem(DIRECTORS_STORAGE_KEY);
+  localStorage.removeItem(AUDITS_STORAGE_KEY);
   toast.info("All data cleared");
 };
 
-// Update the database service with audit related methods
+// Define the interface for the database service
 interface Database {
-  // ... keep existing methods
-  createAudit: (auditData: any) => string;
+  // Company operations
+  getCompanies: () => Company[];
+  getCompanyById: (id: string) => Company | undefined;
+  createCompany: (company: Partial<Company>) => Company;
+  updateCompany: (id: string, updateData: Partial<Company>) => Company | undefined;
+  deleteCompany: (id: string) => boolean;
+  
+  // Director operations
+  getDirectors: () => Director[];
+  getDirectorById: (id: string) => Director | undefined;
+  createDirector: (director: Partial<Director>) => Director;
+  updateDirector: (id: string, updateData: Partial<Director>) => Director | undefined;
+  deleteDirector: (id: string) => boolean;
+  
+  // Audit operations
   getAudits: () => any[];
-  getAuditById: (id: string) => any;
-  updateAudit: (id: string, auditData: any) => void;
-  deleteAudit: (id: string) => void;
+  getAuditById: (id: string) => any | undefined;
+  createAudit: (auditData: any) => any;
+  updateAudit: (id: string, auditData: any) => any | undefined;
+  deleteAudit: (id: string) => boolean;
+  
+  // Utility operations
+  clearAllData: () => void;
 }
 
 export const database: Database = {
-  // ... keep existing methods
+  getCompanies,
+  getCompanyById,
+  createCompany,
+  updateCompany,
+  deleteCompany,
   
-  createAudit: (auditData) => {
-    const audit = { id: crypto.randomUUID(), ...auditData };
-    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
-    audits.push(audit);
-    localStorage.setItem("audits", JSON.stringify(audits));
-    return audit.id;
-  },
+  getDirectors,
+  getDirectorById,
+  createDirector,
+  updateDirector,
+  deleteDirector,
   
-  getAudits: () => {
-    return JSON.parse(localStorage.getItem("audits") || "[]");
-  },
+  getAudits,
+  getAuditById,
+  createAudit,
+  updateAudit,
+  deleteAudit,
   
-  getAuditById: (id) => {
-    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
-    return audits.find((audit: any) => audit.id === id);
-  },
-  
-  updateAudit: (id, auditData) => {
-    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
-    const index = audits.findIndex((audit: any) => audit.id === id);
-    
-    if (index !== -1) {
-      audits[index] = { ...audits[index], ...auditData };
-      localStorage.setItem("audits", JSON.stringify(audits));
-    }
-  },
-  
-  deleteAudit: (id) => {
-    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
-    const filteredAudits = audits.filter((audit: any) => audit.id !== id);
-    localStorage.setItem("audits", JSON.stringify(filteredAudits));
-  }
+  clearAllData
 };
