@@ -26,7 +26,7 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
   // Create relationships mapping
   const getDirectorsByCompany = (companyId: string) => {
     return directors.filter(director => 
-      director.companies?.some(company => company.companyId === companyId)
+      director.companies?.some(company => company.id === companyId)
     );
   };
 
@@ -36,9 +36,8 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
 
   const getCompaniesForDirector = (directorId: string) => {
     const director = directors.find(d => d.id === directorId);
-    return director?.companies?.map(dc => {
-      const company = companies.find(c => c.id === dc.companyId);
-      return company ? { ...company, designation: dc.designation } : null;
+    return director?.companies?.map(company => {
+      return { ...company, directorDesignation: director.designation };
     }).filter(Boolean) || [];
   };
 
@@ -63,9 +62,9 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Building className="h-5 w-5 mr-2 text-blue-500" />
-                  {company.basicDetails?.companyName || "Unnamed Company"}
+                  {company.name || "Unnamed Company"}
                   <span className="ml-2 text-sm text-gray-500">
-                    (CIN: {company.basicDetails?.cin})
+                    (CIN: {company.cin})
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -79,15 +78,12 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
                     </h4>
                     {companyDirectors.length > 0 ? (
                       <ul className="space-y-1 text-sm">
-                        {companyDirectors.map((director) => {
-                          const designation = director.companies?.find(dc => dc.companyId === company.id)?.designation;
-                          return (
-                            <li key={director.id} className="p-2 bg-gray-50 rounded">
-                              {director.personalDetails?.firstName} {director.personalDetails?.lastName}
-                              {designation && <span className="text-gray-600"> ({designation})</span>}
-                            </li>
-                          );
-                        })}
+                        {companyDirectors.map((director) => (
+                          <li key={director.id} className="p-2 bg-gray-50 rounded">
+                            {director.firstName} {director.lastName}
+                            <span className="text-gray-600"> ({director.designation})</span>
+                          </li>
+                        ))}
                       </ul>
                     ) : (
                       <p className="text-gray-500 text-sm">No directors assigned</p>
@@ -153,7 +149,7 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
                     return (
                       <div key={director.id} className="p-4 bg-gray-50 rounded">
                         <h4 className="font-semibold">
-                          {director.personalDetails?.firstName} {director.personalDetails?.lastName}
+                          {director.firstName} {director.lastName}
                         </h4>
                         <p className="text-sm text-gray-600 mb-2">
                           Affiliated with {directorCompanies.length} companies:
@@ -161,8 +157,8 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
                         <ul className="text-sm space-y-1">
                           {directorCompanies.map((company: any) => (
                             <li key={company.id} className="flex justify-between">
-                              <span>{company.basicDetails?.companyName}</span>
-                              <span className="text-gray-600">({company.designation})</span>
+                              <span>{company.name}</span>
+                              <span className="text-gray-600">({company.directorDesignation})</span>
                             </li>
                           ))}
                         </ul>
