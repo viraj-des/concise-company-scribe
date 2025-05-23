@@ -18,17 +18,24 @@ import {
   Eye, 
   Plus, 
   Search,
-  Trash
+  Trash,
+  Network
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShareCapitalMember } from "@/types";
 import { database } from "@/services/database";
 import { format } from "date-fns";
+import ShareCapitalMemberView from "@/components/views/ShareCapitalMemberView";
+import ShareCapitalMemberEdit from "@/components/views/ShareCapitalMemberEdit";
+import HierarchyView from "@/components/views/HierarchyView";
 
 const ShareCapitalMemberList = () => {
   const [members, setMembers] = useState<ShareCapitalMember[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMember, setSelectedMember] = useState<ShareCapitalMember | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'view' | 'edit' | 'hierarchy'>('list');
 
   useEffect(() => {
     // Load share capital members from database
@@ -55,15 +62,73 @@ const ShareCapitalMemberList = () => {
     }
   };
 
+  const handleViewMember = (member: ShareCapitalMember) => {
+    setSelectedMember(member);
+    setViewMode('view');
+  };
+
+  const handleEditMember = (member: ShareCapitalMember) => {
+    setSelectedMember(member);
+    setViewMode('edit');
+  };
+
+  const handleBackToList = () => {
+    setViewMode('list');
+    setSelectedMember(null);
+    // Reload members to get any updates
+    setMembers(database.getShareCapitalMembers());
+  };
+
+  const handleShowHierarchy = () => {
+    setViewMode('hierarchy');
+  };
+
+  if (viewMode === 'view' && selectedMember) {
+    return (
+      <DashboardLayout>
+        <ShareCapitalMemberView 
+          member={selectedMember} 
+          onBack={handleBackToList}
+          onEdit={() => handleEditMember(selectedMember)}
+        />
+      </DashboardLayout>
+    );
+  }
+
+  if (viewMode === 'edit' && selectedMember) {
+    return (
+      <DashboardLayout>
+        <ShareCapitalMemberEdit 
+          member={selectedMember} 
+          onBack={handleBackToList}
+          onSave={handleBackToList}
+        />
+      </DashboardLayout>
+    );
+  }
+
+  if (viewMode === 'hierarchy') {
+    return (
+      <DashboardLayout>
+        <HierarchyView onBack={handleBackToList} />
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Share Capital Members</h1>
-        <Link to="/share-capital-members/add">
-          <Button className="flex items-center">
-            <Plus className="mr-2 h-4 w-4" /> Add Member
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleShowHierarchy} className="flex items-center">
+            <Network className="mr-2 h-4 w-4" /> Hierarchy View
           </Button>
-        </Link>
+          <Link to="/share-capital-members/add">
+            <Button className="flex items-center">
+              <Plus className="mr-2 h-4 w-4" /> Add Member
+            </Button>
+          </Link>
+        </div>
       </div>
       
       <Card>
@@ -116,10 +181,18 @@ const ShareCapitalMemberList = () => {
                     <TableCell>{member.memberDetails?.status}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
-                        <Button variant="outline" size="icon">
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleViewMember(member)}
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="icon">
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleEditMember(member)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button 
