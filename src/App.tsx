@@ -9,6 +9,8 @@ import CompanyList from "./pages/CompanyList";
 import CompanyForm from "./pages/CompanyForm";
 import DirectorList from "./pages/DirectorList";
 import DirectorForm from "./pages/DirectorForm";
+import AuditList from "./pages/AuditList";
+import AuditForm from "./pages/AuditForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/companies/add" element={<CompanyForm />} />
           <Route path="/directors" element={<DirectorList />} />
           <Route path="/directors/add" element={<DirectorForm />} />
+          <Route path="/audits" element={<AuditList />} />
+          <Route path="/audits/add" element={<AuditForm />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

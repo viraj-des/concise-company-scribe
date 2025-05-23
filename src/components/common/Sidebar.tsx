@@ -1,86 +1,71 @@
-
-import { Link, useLocation } from 'react-router-dom';
 import {
-  Home,
-  Users,
-  Building,
+  LayoutDashboard,
   FileText,
-  Settings,
-  LogOut,
-  Menu,
+  Users,
+  ClipboardList,
 } from "lucide-react";
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { NavLink } from "react-router-dom";
+
+interface SidebarLink {
+  icon: any;
+  name: string;
+  href: string;
+}
+
+// Add the audit links to the sidebar
+export const sidebarLinks: SidebarLink[] = [
+  {
+    icon: LayoutDashboard,
+    name: "Dashboard",
+    href: "/",
+  },
+  {
+    icon: FileText,
+    name: "Companies",
+    href: "/companies",
+  },
+  {
+    icon: Users,
+    name: "Directors",
+    href: "/directors",
+  },
+  {
+    icon: ClipboardList,
+    name: "Audits",
+    href: "/audits",
+  },
+];
 
 const Sidebar = () => {
-  const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
-
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Companies', href: '/companies', icon: Building },
-    { name: 'Directors', href: '/directors', icon: Users },
-    { name: 'Reports', href: '/reports', icon: FileText },
-    { name: 'Settings', href: '/settings', icon: Settings },
-  ];
-
   return (
-    <div
-      className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r shadow-sm transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
-      )}
-    >
-      <div className="p-4 flex items-center justify-between">
-        {!collapsed && (
-          <h1 className="text-xl font-bold text-primary">ART-CSERP</h1>
-        )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setCollapsed(!collapsed)}
-          className="ml-auto"
+    <aside className="fixed left-0 top-0 z-50 h-full w-16 flex flex-col bg-white border-r shadow-sm lg:w-64">
+      <div className="flex flex-col gap-y-5 font-medium">
+        <NavLink
+          to="/"
+          className="flex items-center h-20 px-4 text-xl"
         >
-          <Menu className="h-5 w-5" />
-        </Button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto py-4">
-        <nav className="space-y-1 px-2">
-          {navigation.map((item) => {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-                  "flex items-center px-3 py-2 rounded-md transition-colors",
-                  isActive
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                )}
+          <span className="sr-only">Home</span>
+          LOGO
+        </NavLink>
+        <ul>
+          {sidebarLinks.map((link) => (
+            <li key={link.name}>
+              <NavLink
+                to={link.href}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 py-3 px-4 text-gray-500 transition-colors hover:text-primary ${
+                    isActive ? "text-primary bg-gray-50" : ""
+                  }`
+                }
               >
-                <item.icon className={cn("h-5 w-5", collapsed ? "mx-auto" : "mr-3")} />
-                {!collapsed && <span>{item.name}</span>}
-              </Link>
-            );
-          })}
-        </nav>
+                <link.icon className="w-5 h-5 shrink-0" />
+                <span className="hidden lg:inline">{link.name}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <div className="p-4 border-t">
-        <Button
-          variant="ghost"
-          className={cn("w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600", 
-            collapsed && "justify-center"
-          )}
-        >
-          <LogOut className={cn("h-5 w-5", collapsed ? "mx-auto" : "mr-3")} />
-          {!collapsed && <span>Logout</span>}
-        </Button>
-      </div>
-    </div>
+    </aside>
   );
 };
 

@@ -153,21 +153,49 @@ const clearAllData = (): void => {
   toast.info("All data cleared");
 };
 
-export const database = {
-  // Company operations
-  getCompanies,
-  getCompanyById,
-  createCompany,
-  updateCompany,
-  deleteCompany,
+// Update the database service with audit related methods
+interface Database {
+  // ... keep existing methods
+  createAudit: (auditData: any) => string;
+  getAudits: () => any[];
+  getAuditById: (id: string) => any;
+  updateAudit: (id: string, auditData: any) => void;
+  deleteAudit: (id: string) => void;
+}
+
+export const database: Database = {
+  // ... keep existing methods
   
-  // Director operations
-  getDirectors,
-  getDirectorById,
-  createDirector,
-  updateDirector,
-  deleteDirector,
+  createAudit: (auditData) => {
+    const audit = { id: crypto.randomUUID(), ...auditData };
+    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
+    audits.push(audit);
+    localStorage.setItem("audits", JSON.stringify(audits));
+    return audit.id;
+  },
   
-  // Utility
-  clearAllData,
+  getAudits: () => {
+    return JSON.parse(localStorage.getItem("audits") || "[]");
+  },
+  
+  getAuditById: (id) => {
+    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
+    return audits.find((audit: any) => audit.id === id);
+  },
+  
+  updateAudit: (id, auditData) => {
+    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
+    const index = audits.findIndex((audit: any) => audit.id === id);
+    
+    if (index !== -1) {
+      audits[index] = { ...audits[index], ...auditData };
+      localStorage.setItem("audits", JSON.stringify(audits));
+    }
+  },
+  
+  deleteAudit: (id) => {
+    const audits = JSON.parse(localStorage.getItem("audits") || "[]");
+    const filteredAudits = audits.filter((audit: any) => audit.id !== id);
+    localStorage.setItem("audits", JSON.stringify(filteredAudits));
+  }
 };
