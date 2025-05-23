@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,8 @@ import {
   Plus, 
   Search,
   Trash,
-  Network
+  Network,
+  Database
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -83,6 +83,12 @@ const ShareCapitalMemberList = () => {
     setViewMode('hierarchy');
   };
 
+  const handleLoadSampleData = () => {
+    database.loadSampleData();
+    // Reload members to get sample data
+    setMembers(database.getShareCapitalMembers());
+  };
+
   if (viewMode === 'view' && selectedMember) {
     return (
       <DashboardLayout>
@@ -120,6 +126,9 @@ const ShareCapitalMemberList = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Share Capital Members</h1>
         <div className="flex gap-2">
+          <Button variant="outline" onClick={handleLoadSampleData} className="flex items-center">
+            <Database className="mr-2 h-4 w-4" /> Load Sample Data
+          </Button>
           <Button variant="outline" onClick={handleShowHierarchy} className="flex items-center">
             <Network className="mr-2 h-4 w-4" /> Hierarchy View
           </Button>

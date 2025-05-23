@@ -1,6 +1,7 @@
 import { Company, Director, ShareCapitalMember } from "@/types";
 import { v4 as uuid } from 'uuid';
 import { toast } from "sonner";
+import { sampleCompanies, sampleDirectors, sampleAudits, sampleShareCapitalMembers } from "./sampleData";
 
 // In a real application, this would be a connection to a real database
 // For now, we'll use localStorage for persistence
@@ -260,6 +261,38 @@ const deleteShareCapitalMember = (id: string): boolean => {
   return false;
 };
 
+// Load sample data function
+const loadSampleData = (): void => {
+  // Check if data already exists
+  const companies = getCompanies();
+  const directors = getDirectors();
+  const audits = getAudits();
+  const shareCapitalMembers = getShareCapitalMembers();
+  
+  // Only load sample data if no data exists
+  if (companies.length === 0) {
+    saveToStorage(COMPANIES_STORAGE_KEY, sampleCompanies);
+    toast.success("Sample companies loaded");
+  }
+  
+  if (directors.length === 0) {
+    saveToStorage(DIRECTORS_STORAGE_KEY, sampleDirectors);
+    toast.success("Sample directors loaded");
+  }
+  
+  if (audits.length === 0) {
+    saveToStorage(AUDITS_STORAGE_KEY, sampleAudits);
+    toast.success("Sample audits loaded");
+  }
+  
+  if (shareCapitalMembers.length === 0) {
+    saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, sampleShareCapitalMembers);
+    toast.success("Sample share capital members loaded");
+  }
+
+  toast.info("Sample data has been loaded successfully");
+};
+
 // Clear all data (for testing)
 const clearAllData = (): void => {
   localStorage.removeItem(COMPANIES_STORAGE_KEY);
@@ -301,6 +334,7 @@ interface Database {
   
   // Utility operations
   clearAllData: () => void;
+  loadSampleData: () => void;
 }
 
 export const database: Database = {
@@ -328,5 +362,6 @@ export const database: Database = {
   updateShareCapitalMember,
   deleteShareCapitalMember,
   
-  clearAllData
+  clearAllData,
+  loadSampleData
 };
