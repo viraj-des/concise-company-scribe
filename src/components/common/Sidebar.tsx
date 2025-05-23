@@ -1,8 +1,10 @@
+
 import {
   LayoutDashboard,
   FileText,
   Users,
   ClipboardList,
+  Share,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -12,7 +14,7 @@ interface SidebarLink {
   href: string;
 }
 
-// Add the audit links to the sidebar
+// Add the share capital members link to the sidebar
 export const sidebarLinks: SidebarLink[] = [
   {
     icon: LayoutDashboard,
@@ -33,6 +35,11 @@ export const sidebarLinks: SidebarLink[] = [
     icon: ClipboardList,
     name: "Audits",
     href: "/audits",
+  },
+  {
+    icon: Share,
+    name: "Share Capital",
+    href: "/share-capital-members",
   },
 ];
 

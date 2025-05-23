@@ -11,6 +11,8 @@ import DirectorList from "./pages/DirectorList";
 import DirectorForm from "./pages/DirectorForm";
 import AuditList from "./pages/AuditList";
 import AuditForm from "./pages/AuditForm";
+import ShareCapitalMemberList from "./pages/ShareCapitalMemberList";
+import ShareCapitalMemberForm from "./pages/ShareCapitalMemberForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/directors/add" element={<DirectorForm />} />
           <Route path="/audits" element={<AuditList />} />
           <Route path="/audits/add" element={<AuditForm />} />
+          <Route path="/share-capital-members" element={<ShareCapitalMemberList />} />
+          <Route path="/share-capital-members/add" element={<ShareCapitalMemberForm />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -152,3 +152,128 @@ export interface User {
   email: string;
   role: 'Admin' | 'Manager' | 'Employee' | 'Super-User';
 }
+
+// Share Capital Members Types
+export type CapitalType = 'Equity' | 'Preference' | 'Other';
+export type MemberStatus = 'Individual' | 'Body Corporate' | 'LLP' | 'HUF' | 'Foreign National' | 'Foreign Company' | 'Other';
+export type CapitalMode = 'Incorporation' | 'Allotment' | 'Transfer' | 'Transmission' | 'Bonus' | 'Conversion' | 'Split' | 'Consolidation' | 'Buy-Back' | 'Other';
+
+export interface AuthorizedCapital {
+  id?: string;
+  capitalType: CapitalType;
+  date: string;
+  mode: CapitalMode;
+  srnOfSh7?: string;
+  numberOfShares: number;
+  nominalValuePerShare: number;
+  nominalAmount: number;
+}
+
+export interface IssuedCapital {
+  id?: string;
+  capitalType: CapitalType;
+  description: string;
+  date: string;
+  mode: CapitalMode;
+  numberOfShares: number;
+  nominalValuePerShare: number;
+  premiumOrDiscountPerShare: number;
+}
+
+export interface SubscribedCapital {
+  id?: string;
+  isSameAsIssued: boolean;
+  capitalType: CapitalType;
+  description: string;
+  date: string;
+  mode: CapitalMode;
+  numberOfShares: number;
+  nominalValuePerShare: number;
+  premiumOrDiscountPerShare: number;
+}
+
+export interface CalledUpCapital {
+  id?: string;
+  isSameAsSubscribed: boolean;
+  capitalType: CapitalType;
+  description: string;
+  date: string;
+  mode: CapitalMode;
+  numberOfShares: number;
+  nominalValuePerShare: number;
+  amountCalledUpPerShare: number;
+  premiumOrDiscountPerShare: number;
+}
+
+export interface PaidUpCapital {
+  id?: string;
+  isSameAsCalledUp: boolean;
+  capitalType: CapitalType;
+  description: string;
+  date: string;
+  mode: CapitalMode;
+  numberOfShares: number;
+  nominalValuePerShare: number;
+  amountPaidUpPerShare: number;
+  premiumOrDiscountPerShare: number;
+  srnOfPas3: string;
+}
+
+export interface MemberDetails {
+  id?: string;
+  status: MemberStatus;
+  prefix: Prefix;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  jointShareholderName?: string;
+  address: string;
+  email: string;
+  phoneNumber: string;
+  cinRegistrationNumber?: string;
+  pan: string;
+  nationality: string;
+  occupation: string;
+  isMinor: boolean;
+  hasNomination: boolean;
+}
+
+export interface EquityDetails {
+  id?: string;
+  folioNumberDpIdClientId?: string;
+  dateOfBecomingMember: string;
+  nominalValuePerShare: number;
+  physicalForm: number;
+  dematForm: number;
+  totalShares?: number;
+  dateOfDeclaration?: string;
+  beneficialOwnerName?: string;
+  srnOfMgt6?: string;
+  dateOfCessation?: string;
+}
+
+export interface PreferenceDetails {
+  id?: string;
+  folioNumberDpIdClientId?: string;
+  dateOfBecomingMember: string;
+  nominalValuePerShare: number;
+  physicalForm: number;
+  dematForm: number;
+  totalShares?: number;
+  dateOfDeclaration?: string;
+  beneficialOwnerName?: string;
+  srnOfMgt6?: string;
+  dateOfCessation?: string;
+}
+
+export interface ShareCapitalMember {
+  id?: string;
+  authorizedCapital: AuthorizedCapital;
+  issuedCapital: IssuedCapital;
+  subscribedCapital: SubscribedCapital;
+  calledUpCapital: CalledUpCapital;
+  paidUpCapital: PaidUpCapital;
+  memberDetails: MemberDetails;
+  equityDetails?: EquityDetails;
+  preferenceDetails?: PreferenceDetails;
+}

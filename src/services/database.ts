@@ -1,5 +1,4 @@
-
-import { Company, Director } from "@/types";
+import { Company, Director, ShareCapitalMember } from "@/types";
 import { v4 as uuid } from 'uuid';
 import { toast } from "sonner";
 
@@ -8,6 +7,7 @@ import { toast } from "sonner";
 const COMPANIES_STORAGE_KEY = "corporate-registry-companies";
 const DIRECTORS_STORAGE_KEY = "corporate-registry-directors";
 const AUDITS_STORAGE_KEY = "corporate-registry-audits";
+const SHARE_CAPITAL_MEMBERS_STORAGE_KEY = "corporate-registry-share-capital-members";
 
 const loadFromStorage = <T>(key: string): T[] => {
   try {
@@ -203,11 +203,69 @@ const deleteAudit = (id: string): boolean => {
   return false;
 };
 
+// Share Capital Member CRUD operations
+const getShareCapitalMembers = (): ShareCapitalMember[] => {
+  return loadFromStorage<ShareCapitalMember>(SHARE_CAPITAL_MEMBERS_STORAGE_KEY);
+};
+
+const getShareCapitalMemberById = (id: string): ShareCapitalMember | undefined => {
+  const members = getShareCapitalMembers();
+  return members.find(member => member.id === id);
+};
+
+const createShareCapitalMember = (member: Partial<ShareCapitalMember>): ShareCapitalMember => {
+  const members = getShareCapitalMembers();
+  
+  // Create new member with ID
+  const newMember: ShareCapitalMember = {
+    ...member as ShareCapitalMember,
+    id: uuid(),
+  };
+  
+  members.push(newMember);
+  saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, members);
+  toast.success("Share Capital Member created successfully");
+  
+  return newMember;
+};
+
+const updateShareCapitalMember = (id: string, updateData: Partial<ShareCapitalMember>): ShareCapitalMember | undefined => {
+  const members = getShareCapitalMembers();
+  const index = members.findIndex(member => member.id === id);
+  
+  if (index !== -1) {
+    // Update member while keeping the same ID
+    const updatedMember: ShareCapitalMember = { ...members[index], ...updateData };
+    members[index] = updatedMember;
+    saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, members);
+    toast.success("Share Capital Member updated successfully");
+    return updatedMember;
+  }
+  
+  toast.error("Share Capital Member not found");
+  return undefined;
+};
+
+const deleteShareCapitalMember = (id: string): boolean => {
+  const members = getShareCapitalMembers();
+  const filteredMembers = members.filter(member => member.id !== id);
+  
+  if (filteredMembers.length < members.length) {
+    saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, filteredMembers);
+    toast.success("Share Capital Member deleted successfully");
+    return true;
+  }
+  
+  toast.error("Share Capital Member not found");
+  return false;
+};
+
 // Clear all data (for testing)
 const clearAllData = (): void => {
   localStorage.removeItem(COMPANIES_STORAGE_KEY);
   localStorage.removeItem(DIRECTORS_STORAGE_KEY);
   localStorage.removeItem(AUDITS_STORAGE_KEY);
+  localStorage.removeItem(SHARE_CAPITAL_MEMBERS_STORAGE_KEY);
   toast.info("All data cleared");
 };
 
@@ -234,6 +292,13 @@ interface Database {
   updateAudit: (id: string, auditData: any) => any | undefined;
   deleteAudit: (id: string) => boolean;
   
+  // Share Capital Member operations
+  getShareCapitalMembers: () => ShareCapitalMember[];
+  getShareCapitalMemberById: (id: string) => ShareCapitalMember | undefined;
+  createShareCapitalMember: (member: Partial<ShareCapitalMember>) => ShareCapitalMember;
+  updateShareCapitalMember: (id: string, updateData: Partial<ShareCapitalMember>) => ShareCapitalMember | undefined;
+  deleteShareCapitalMember: (id: string) => boolean;
+  
   // Utility operations
   clearAllData: () => void;
 }
@@ -256,6 +321,12 @@ export const database: Database = {
   createAudit,
   updateAudit,
   deleteAudit,
+  
+  getShareCapitalMembers,
+  getShareCapitalMemberById,
+  createShareCapitalMember,
+  updateShareCapitalMember,
+  deleteShareCapitalMember,
   
   clearAllData
 };
