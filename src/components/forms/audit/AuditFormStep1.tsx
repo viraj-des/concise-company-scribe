@@ -11,7 +11,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -133,7 +132,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
                 name="auditorName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name of Auditor/ Proprietary Concern/ Partnership Firm*</FormLabel>
+                    <FormLabel>Name of Auditor/Proprietary Concern/Partnership Firm*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -272,7 +271,6 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
                             if (date) field.onChange(date.toISOString());
                           }}
                           initialFocus
-                          className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>
@@ -314,7 +312,6 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
                             if (date) field.onChange(date.toISOString());
                           }}
                           initialFocus
-                          className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>
@@ -365,7 +362,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
                 name="membershipNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Membership Number of Auditor/ Proprietor*</FormLabel>
+                    <FormLabel>Membership Number of Auditor/Proprietor*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -407,7 +404,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
                 name="panOfSigningPartner"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>PAN of Signing Partner/ Auditor*</FormLabel>
+                    <FormLabel>PAN of Signing Partner/Auditor*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -483,27 +480,6 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="attendedAgm"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>
-                        Whether Statutory Auditor attended Annual General Meeting (AGM)?*
-                      </FormLabel>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="branchOfficeAddress"
                 render={({ field }) => (
                   <FormItem>
@@ -516,6 +492,27 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="attendedAgm"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Whether Statutory Auditor attended Annual General Meeting (AGM)?*
+                    </FormLabel>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="flex justify-end">
               <Button type="submit">Next</Button>

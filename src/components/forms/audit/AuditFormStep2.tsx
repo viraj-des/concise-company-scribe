@@ -104,7 +104,6 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                             if (date) field.onChange(date.toISOString());
                           }}
                           initialFocus
-                          className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>
@@ -146,7 +145,6 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                             if (date) field.onChange(date.toISOString());
                           }}
                           initialFocus
-                          className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>
@@ -160,7 +158,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                 name="paidUpCapital"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Paid-Up Capital ()*</FormLabel>
+                    <FormLabel>Paid-Up Capital (₹)*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -175,7 +173,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                 name="reservesAndSurplus"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Reserves & Surplus ()*</FormLabel>
+                    <FormLabel>Reserves & Surplus (₹)*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -190,7 +188,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                 name="netWorth"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Net Worth ()*</FormLabel>
+                    <FormLabel>Net Worth (₹)*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -205,7 +203,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                 name="netProfit"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Net Profit / (Loss) ()*</FormLabel>
+                    <FormLabel>Net Profit / (Loss) (₹)*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -220,7 +218,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                 name="amountOfBorrowing"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount of Borrowing ()*</FormLabel>
+                    <FormLabel>Amount of Borrowing (₹)*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -235,7 +233,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
                 name="turnover"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Turnover ()*</FormLabel>
+                    <FormLabel>Turnover (₹)*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
