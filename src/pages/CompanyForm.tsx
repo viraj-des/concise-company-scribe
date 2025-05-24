@@ -5,16 +5,20 @@ import Stepper from "@/components/common/Stepper";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import CompanyFormStep1 from "@/components/forms/company/CompanyFormStep1";
 import CompanyFormStep2 from "@/components/forms/company/CompanyFormStep2";
+import CompanyFormStep3Statutory from "@/components/forms/company/CompanyFormStep3Statutory";
+import CompanyFormStep4Financial from "@/components/forms/company/CompanyFormStep4Financial";
 import CompanyFormStep3 from "@/components/forms/company/CompanyFormStep3";
 import CompanyFormStep4 from "@/components/forms/company/CompanyFormStep4";
 import CompanyFormStep5 from "@/components/forms/company/CompanyFormStep5";
 import { Card } from "@/components/ui/card";
-import { Company } from "@/types";
+import { CompanyFormData } from "@/types/company";
 import { database } from "@/services/database";
 
 const steps = [
-  "Company Info",
-  "Address",
+  "Basic Info",
+  "Address & Contact", 
+  "Statutory IDs",
+  "Financial Info",
   "Branches",
   "Corporate Relations",
   "Registrations",
@@ -23,9 +27,9 @@ const steps = [
 const CompanyForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<Company>>({});
+  const [formData, setFormData] = useState<Partial<CompanyFormData>>({});
 
-  const handleNext = (data: Partial<Company>) => {
+  const handleNext = (data: Partial<CompanyFormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
     
     if (currentStep < steps.length) {
@@ -44,10 +48,43 @@ const CompanyForm = () => {
     }
   };
 
-  const handleSubmit = (data: Partial<Company>) => {
+  const handleSubmit = (data: Partial<CompanyFormData>) => {
     console.log("Submitting company data:", data);
+    
+    // Transform the comprehensive form data to match the existing Company interface
+    const companyData = {
+      cin: data.cin || "",
+      coiUrl: data.coiUrl || "",
+      website: data.website || "",
+      name: data.name || "",
+      incorpDate: data.incorpDate || "",
+      category: data.category || "",
+      class: data.class || "",
+      subcategory: data.subcategory || "",
+      phoneNumber: data.phoneNumber || "",
+      email: data.email || "",
+      fyStart: data.fyStart || "",
+      fyEnd: data.fyEnd || "",
+      regAddress: data.regAddress || "",
+      addressProofUrl: data.addressProofUrl || "",
+      country: data.country || "",
+      state: data.state || "",
+      city: data.city || "",
+      pinCode: data.pinCode || "",
+      rocJurisdiction: data.rocJurisdiction || "",
+      branches: data.branches || [],
+      corporateRelations: data.corporateRelations || [],
+      registrations: {
+        pan: data.pan || "",
+        tan: data.tan || "",
+        // Add other registration fields as needed
+      },
+      actualBusinessActivity: data.actualBusinessActivity || "",
+      alternateBooksAddress: data.alternateBooksAddress || "",
+    };
+    
     // Save to database
-    database.createCompany(data);
+    database.createCompany(companyData);
     navigate("/companies");
   };
 
@@ -72,7 +109,7 @@ const CompanyForm = () => {
       )}
 
       {currentStep === 3 && (
-        <CompanyFormStep3
+        <CompanyFormStep3Statutory
           onNext={handleNext}
           onBack={handleBack}
           defaultValues={formData}
@@ -80,6 +117,22 @@ const CompanyForm = () => {
       )}
 
       {currentStep === 4 && (
+        <CompanyFormStep4Financial
+          onNext={handleNext}
+          onBack={handleBack}
+          defaultValues={formData}
+        />
+      )}
+
+      {currentStep === 5 && (
+        <CompanyFormStep3
+          onNext={handleNext}
+          onBack={handleBack}
+          defaultValues={formData}
+        />
+      )}
+
+      {currentStep === 6 && (
         <CompanyFormStep4
           onNext={handleNext}
           onBack={handleBack} 
@@ -87,10 +140,9 @@ const CompanyForm = () => {
         />
       )}
 
-      {currentStep === 5 && (
+      {currentStep === 7 && (
         <CompanyFormStep5
           onNext={(formStepData) => {
-            // Here's the fix - transform the form data into the expected Company structure
             const registrationData = {
               registrations: {
                 pan: formStepData.pan,
@@ -113,9 +165,9 @@ const CompanyForm = () => {
           }}
           onBack={handleBack}
           defaultValues={{
-            pan: formData.registrations?.pan || "",
+            pan: formData.pan || "",
             panFileUrl: formData.registrations?.panFileUrl || "",
-            tan: formData.registrations?.tan || "",
+            tan: formData.tan || "",
             tanFileUrl: formData.registrations?.tanFileUrl || "",
             esic: formData.registrations?.esic || "",
             esicFileUrl: formData.registrations?.esicFileUrl || "",
