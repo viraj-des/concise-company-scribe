@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Search, Edit, Trash } from "lucide-react";
+import { Plus, Search, Edit, Trash, Eye, FileText } from "lucide-react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,10 +20,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { database } from "@/services/database";
+import AuditView from "@/components/views/AuditView";
 
 const AuditList = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAudit, setSelectedAudit] = useState<any | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'view'>('list');
   const audits = database.getAudits() || [];
 
   const filteredAudits = audits.filter((audit) => {
@@ -38,6 +41,28 @@ const AuditList = () => {
       navigate("/audits");
     }
   };
+
+  const handleViewAudit = (audit: any) => {
+    setSelectedAudit(audit);
+    setViewMode('view');
+  };
+
+  const handleBackToList = () => {
+    setViewMode('list');
+    setSelectedAudit(null);
+  };
+
+  if (viewMode === 'view' && selectedAudit) {
+    return (
+      <DashboardLayout>
+        <AuditView 
+          audit={selectedAudit} 
+          onBack={handleBackToList}
+          onEdit={() => navigate(`/audits/edit/${selectedAudit.id}`)}
+        />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -81,22 +106,34 @@ const AuditList = () => {
                 <TableBody>
                   {filteredAudits.map((audit) => (
                     <TableRow key={audit.id}>
-                      <TableCell>{audit.auditorName}</TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center">
+                          <FileText className="h-4 w-4 mr-2 text-primary" />
+                          {audit.auditorName}
+                        </div>
+                      </TableCell>
                       <TableCell>{audit.firmRegistrationNumber}</TableCell>
                       <TableCell>{audit.appointmentDate ? new Date(audit.appointmentDate).toLocaleDateString() : "N/A"}</TableCell>
                       <TableCell>{audit.emailId}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button
-                            variant="ghost"
-                            size="sm"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleViewAudit(audit)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
                             onClick={() => navigate(`/audits/edit/${audit.id}`)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
-                            variant="ghost"
-                            size="sm"
+                            variant="outline"
+                            size="icon"
                             onClick={() => handleDelete(audit.id!)}
                           >
                             <Trash className="h-4 w-4" />
