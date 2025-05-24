@@ -1,4 +1,3 @@
-
 export interface CompanyFormData {
   // Step 1: Basic Information
   cin: string;
@@ -129,11 +128,12 @@ export interface CompanyFormData {
   actualBusinessActivity?: string;
   alternateBooksAddress?: string;
 
-  // Add registrations property
+  // Registration fields - align with Registration interface from types/index.ts
   registrations?: {
-    pan?: string;
+    id?: string;
+    pan: string;
     panFileUrl?: string;
-    tan?: string;
+    tan: string;
     tanFileUrl?: string;
     esic?: string;
     esicFileUrl?: string;
