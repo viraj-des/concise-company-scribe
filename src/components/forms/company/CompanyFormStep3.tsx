@@ -18,7 +18,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CompanyFormData, Branch } from "@/types/company";
+import { CompanyFormData } from "@/types/company";
+import { Branch } from "@/types/index";
 import { useState } from "react";
 import { Plus, Trash } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";

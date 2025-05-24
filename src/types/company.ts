@@ -1,3 +1,4 @@
+
 export interface CompanyFormData {
   // Step 1: Basic Information
   cin: string;
@@ -127,4 +128,22 @@ export interface CompanyFormData {
   }>;
   actualBusinessActivity?: string;
   alternateBooksAddress?: string;
+
+  // Add registrations property
+  registrations?: {
+    pan?: string;
+    panFileUrl?: string;
+    tan?: string;
+    tanFileUrl?: string;
+    esic?: string;
+    esicFileUrl?: string;
+    epf?: string;
+    epfFileUrl?: string;
+    pt?: string;
+    ptFileUrl?: string;
+    gst?: string;
+    gstFileUrl?: string;
+    isin?: string;
+    isinFileUrl?: string;
+  };
 }
