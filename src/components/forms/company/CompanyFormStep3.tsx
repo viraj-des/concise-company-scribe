@@ -1,7 +1,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { companyStep3Schema, branchSchema } from "@/schemas/companySchema";
+import { companyStep3BranchesSchema, branchSchema } from "@/schemas/companySchema";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,18 +18,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Company, Branch } from "@/types";
+import { CompanyFormData, Branch } from "@/types/company";
 import { useState } from "react";
 import { Plus, Trash } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
-type FormData = z.infer<typeof companyStep3Schema>;
+type FormData = z.infer<typeof companyStep3BranchesSchema>;
 type BranchFormData = z.infer<typeof branchSchema>;
 
 interface CompanyFormStep3Props {
-  onNext: (data: Partial<Company>) => void;
+  onNext: (data: Partial<CompanyFormData>) => void;
   onBack: () => void;
-  defaultValues?: Partial<Company>;
+  defaultValues?: Partial<CompanyFormData>;
 }
 
 const CompanyFormStep3 = ({ onNext, onBack, defaultValues = {} }: CompanyFormStep3Props) => {
@@ -38,7 +38,7 @@ const CompanyFormStep3 = ({ onNext, onBack, defaultValues = {} }: CompanyFormSte
   );
 
   const form = useForm<FormData>({
-    resolver: zodResolver(companyStep3Schema),
+    resolver: zodResolver(companyStep3BranchesSchema),
     defaultValues: {
       actualBusinessActivity: defaultValues.actualBusinessActivity || "",
       alternateBooksAddress: defaultValues.alternateBooksAddress || "",

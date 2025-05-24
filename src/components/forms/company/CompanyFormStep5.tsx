@@ -1,6 +1,7 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { companyStep5Schema } from "@/schemas/companySchema";
+import { registrationSchema } from "@/schemas/companySchema";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-type FormData = z.infer<typeof companyStep5Schema>;
+type FormData = z.infer<typeof registrationSchema>;
 
 interface CompanyFormStep5Props {
   onNext: (data: FormData) => void;
@@ -29,15 +30,22 @@ interface CompanyFormStep5Props {
 
 const CompanyFormStep5 = ({ onNext, onBack, defaultValues = {} }: CompanyFormStep5Props) => {
   const form = useForm<FormData>({
-    resolver: zodResolver(companyStep5Schema),
+    resolver: zodResolver(registrationSchema),
     defaultValues: {
       pan: defaultValues.pan || "",
+      panFileUrl: defaultValues.panFileUrl || "",
       tan: defaultValues.tan || "",
+      tanFileUrl: defaultValues.tanFileUrl || "",
       esic: defaultValues.esic || "",
+      esicFileUrl: defaultValues.esicFileUrl || "",
       epf: defaultValues.epf || "",
+      epfFileUrl: defaultValues.epfFileUrl || "",
       pt: defaultValues.pt || "",
+      ptFileUrl: defaultValues.ptFileUrl || "",
       gst: defaultValues.gst || "",
+      gstFileUrl: defaultValues.gstFileUrl || "",
       isin: defaultValues.isin || "",
+      isinFileUrl: defaultValues.isinFileUrl || "",
     },
   });
 
