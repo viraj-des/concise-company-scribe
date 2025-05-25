@@ -1,7 +1,6 @@
-
 import { Company, Director, ShareCapitalMember } from "@/types";
 import { toast } from "sonner";
-import { supabase } from "./supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 // Company CRUD operations
 const getCompanies = async (): Promise<Company[]> => {
