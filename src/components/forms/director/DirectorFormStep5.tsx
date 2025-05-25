@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { directorStep5Schema } from "@/schemas/directorSchema";
@@ -18,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Designation, Director } from "@/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -53,14 +52,23 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
   const [companyList, setCompanyList] = useState<{id: string, name: string}[]>([]);
   
-  useState(() => {
+  useEffect(() => {
     // Load companies from database
-    const loadedCompanies = database.getCompanies().map(company => ({
-      id: company.id || "",
-      name: company.name
-    }));
-    setCompanyList(loadedCompanies);
-  });
+    const loadCompanies = async () => {
+      try {
+        const loadedCompanies = await database.getCompanies();
+        const mappedCompanies = loadedCompanies.map(company => ({
+          id: company.id || "",
+          name: company.name
+        }));
+        setCompanyList(mappedCompanies);
+      } catch (error) {
+        console.error("Error loading companies:", error);
+      }
+    };
+    
+    loadCompanies();
+  }, []);
 
   const form = useForm<FormData>({
     resolver: zodResolver(directorStep5Schema),

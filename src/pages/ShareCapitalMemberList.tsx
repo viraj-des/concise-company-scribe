@@ -39,9 +39,13 @@ const ShareCapitalMemberList = () => {
 
   useEffect(() => {
     // Load share capital members from database
-    const loadMembers = () => {
-      const data = database.getShareCapitalMembers();
-      setMembers(data);
+    const loadMembers = async () => {
+      try {
+        const data = await database.getShareCapitalMembers();
+        setMembers(data);
+      } catch (error) {
+        console.error("Error loading share capital members:", error);
+      }
     };
 
     loadMembers();
@@ -55,10 +59,15 @@ const ShareCapitalMemberList = () => {
       `${member.memberDetails?.firstName || ""} ${member.memberDetails?.lastName || ""}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteMember = (id: string) => {
+  const handleDeleteMember = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this share capital member?")) {
-      database.deleteShareCapitalMember(id);
-      setMembers(database.getShareCapitalMembers());
+      try {
+        await database.deleteShareCapitalMember(id);
+        const updatedMembers = await database.getShareCapitalMembers();
+        setMembers(updatedMembers);
+      } catch (error) {
+        console.error("Error deleting share capital member:", error);
+      }
     }
   };
 
@@ -72,21 +81,31 @@ const ShareCapitalMemberList = () => {
     setViewMode('edit');
   };
 
-  const handleBackToList = () => {
+  const handleBackToList = async () => {
     setViewMode('list');
     setSelectedMember(null);
     // Reload members to get any updates
-    setMembers(database.getShareCapitalMembers());
+    try {
+      const updatedMembers = await database.getShareCapitalMembers();
+      setMembers(updatedMembers);
+    } catch (error) {
+      console.error("Error reloading share capital members:", error);
+    }
   };
 
   const handleShowHierarchy = () => {
     setViewMode('hierarchy');
   };
 
-  const handleLoadSampleData = () => {
-    database.loadSampleData();
-    // Reload members to get sample data
-    setMembers(database.getShareCapitalMembers());
+  const handleLoadSampleData = async () => {
+    try {
+      await database.loadSampleData();
+      // Reload members to get sample data
+      const updatedMembers = await database.getShareCapitalMembers();
+      setMembers(updatedMembers);
+    } catch (error) {
+      console.error("Error loading sample data:", error);
+    }
   };
 
   if (viewMode === 'view' && selectedMember) {

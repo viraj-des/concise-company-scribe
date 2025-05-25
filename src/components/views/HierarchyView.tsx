@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,10 +16,25 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
   const [audits, setAudits] = useState<any[]>([]);
 
   useEffect(() => {
-    setCompanies(database.getCompanies());
-    setDirectors(database.getDirectors());
-    setShareCapitalMembers(database.getShareCapitalMembers());
-    setAudits(database.getAudits());
+    const loadData = async () => {
+      try {
+        const [companiesData, directorsData, shareCapitalData, auditsData] = await Promise.all([
+          database.getCompanies(),
+          database.getDirectors(),
+          database.getShareCapitalMembers(),
+          database.getAudits()
+        ]);
+        
+        setCompanies(companiesData);
+        setDirectors(directorsData);
+        setShareCapitalMembers(shareCapitalData);
+        setAudits(auditsData);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    };
+
+    loadData();
   }, []);
 
   // Create relationships mapping
