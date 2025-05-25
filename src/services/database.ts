@@ -1,9 +1,26 @@
-import { Company, Director, ShareCapitalMember } from "@/types";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
+import { toast } from "sonner";
+
+// Type aliases for better readability
+type CompanyRow = Database['public']['Tables']['companies']['Row'];
+type CompanyInsert = Database['public']['Tables']['companies']['Insert'];
+type CompanyUpdate = Database['public']['Tables']['companies']['Update'];
+
+type DirectorRow = Database['public']['Tables']['directors']['Row'];
+type DirectorInsert = Database['public']['Tables']['directors']['Insert'];
+type DirectorUpdate = Database['public']['Tables']['directors']['Update'];
+
+type AuditRow = Database['public']['Tables']['audits']['Row'];
+type AuditInsert = Database['public']['Tables']['audits']['Insert'];
+type AuditUpdate = Database['public']['Tables']['audits']['Update'];
+
+type ShareCapitalMemberRow = Database['public']['Tables']['share_capital_members']['Row'];
+type ShareCapitalMemberInsert = Database['public']['Tables']['share_capital_members']['Insert'];
+type ShareCapitalMemberUpdate = Database['public']['Tables']['share_capital_members']['Update'];
 
 // Company CRUD operations
-const getCompanies = async (): Promise<Company[]> => {
+const getCompanies = async (): Promise<CompanyRow[]> => {
   try {
     const { data, error } = await supabase
       .from('companies')
@@ -19,7 +36,7 @@ const getCompanies = async (): Promise<Company[]> => {
   }
 };
 
-const getCompanyById = async (id: string): Promise<Company | undefined> => {
+const getCompanyById = async (id: string): Promise<CompanyRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('companies')
@@ -35,7 +52,7 @@ const getCompanyById = async (id: string): Promise<Company | undefined> => {
   }
 };
 
-const createCompany = async (company: Partial<Company>): Promise<Company> => {
+const createCompany = async (company: CompanyInsert): Promise<CompanyRow> => {
   try {
     const { data, error } = await supabase
       .from('companies')
@@ -53,7 +70,7 @@ const createCompany = async (company: Partial<Company>): Promise<Company> => {
   }
 };
 
-const updateCompany = async (id: string, updateData: Partial<Company>): Promise<Company | undefined> => {
+const updateCompany = async (id: string, updateData: CompanyUpdate): Promise<CompanyRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('companies')
@@ -90,7 +107,7 @@ const deleteCompany = async (id: string): Promise<boolean> => {
 };
 
 // Director CRUD operations
-const getDirectors = async (): Promise<Director[]> => {
+const getDirectors = async (): Promise<DirectorRow[]> => {
   try {
     const { data, error } = await supabase
       .from('directors')
@@ -106,7 +123,7 @@ const getDirectors = async (): Promise<Director[]> => {
   }
 };
 
-const getDirectorById = async (id: string): Promise<Director | undefined> => {
+const getDirectorById = async (id: string): Promise<DirectorRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('directors')
@@ -122,7 +139,7 @@ const getDirectorById = async (id: string): Promise<Director | undefined> => {
   }
 };
 
-const createDirector = async (director: Partial<Director>): Promise<Director> => {
+const createDirector = async (director: DirectorInsert): Promise<DirectorRow> => {
   try {
     const { data, error } = await supabase
       .from('directors')
@@ -140,7 +157,7 @@ const createDirector = async (director: Partial<Director>): Promise<Director> =>
   }
 };
 
-const updateDirector = async (id: string, updateData: Partial<Director>): Promise<Director | undefined> => {
+const updateDirector = async (id: string, updateData: DirectorUpdate): Promise<DirectorRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('directors')
@@ -177,7 +194,7 @@ const deleteDirector = async (id: string): Promise<boolean> => {
 };
 
 // Audit CRUD operations
-const getAudits = async (): Promise<any[]> => {
+const getAudits = async (): Promise<AuditRow[]> => {
   try {
     const { data, error } = await supabase
       .from('audits')
@@ -193,7 +210,7 @@ const getAudits = async (): Promise<any[]> => {
   }
 };
 
-const getAuditById = async (id: string): Promise<any | undefined> => {
+const getAuditById = async (id: string): Promise<AuditRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('audits')
@@ -209,7 +226,7 @@ const getAuditById = async (id: string): Promise<any | undefined> => {
   }
 };
 
-const createAudit = async (auditData: any): Promise<any> => {
+const createAudit = async (auditData: AuditInsert): Promise<AuditRow> => {
   try {
     const { data, error } = await supabase
       .from('audits')
@@ -227,7 +244,7 @@ const createAudit = async (auditData: any): Promise<any> => {
   }
 };
 
-const updateAudit = async (id: string, updateData: any): Promise<any | undefined> => {
+const updateAudit = async (id: string, updateData: AuditUpdate): Promise<AuditRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('audits')
@@ -264,7 +281,7 @@ const deleteAudit = async (id: string): Promise<boolean> => {
 };
 
 // Share Capital Member CRUD operations
-const getShareCapitalMembers = async (): Promise<ShareCapitalMember[]> => {
+const getShareCapitalMembers = async (): Promise<ShareCapitalMemberRow[]> => {
   try {
     const { data, error } = await supabase
       .from('share_capital_members')
@@ -280,7 +297,7 @@ const getShareCapitalMembers = async (): Promise<ShareCapitalMember[]> => {
   }
 };
 
-const getShareCapitalMemberById = async (id: string): Promise<ShareCapitalMember | undefined> => {
+const getShareCapitalMemberById = async (id: string): Promise<ShareCapitalMemberRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('share_capital_members')
@@ -296,7 +313,7 @@ const getShareCapitalMemberById = async (id: string): Promise<ShareCapitalMember
   }
 };
 
-const createShareCapitalMember = async (member: Partial<ShareCapitalMember>): Promise<ShareCapitalMember> => {
+const createShareCapitalMember = async (member: ShareCapitalMemberInsert): Promise<ShareCapitalMemberRow> => {
   try {
     const { data, error } = await supabase
       .from('share_capital_members')
@@ -314,7 +331,7 @@ const createShareCapitalMember = async (member: Partial<ShareCapitalMember>): Pr
   }
 };
 
-const updateShareCapitalMember = async (id: string, updateData: Partial<ShareCapitalMember>): Promise<ShareCapitalMember | undefined> => {
+const updateShareCapitalMember = async (id: string, updateData: ShareCapitalMemberUpdate): Promise<ShareCapitalMemberRow | undefined> => {
   try {
     const { data, error } = await supabase
       .from('share_capital_members')
@@ -373,31 +390,31 @@ const loadSampleData = async (): Promise<void> => {
 // Define the interface for the database service
 interface Database {
   // Company operations
-  getCompanies: () => Promise<Company[]>;
-  getCompanyById: (id: string) => Promise<Company | undefined>;
-  createCompany: (company: Partial<Company>) => Promise<Company>;
-  updateCompany: (id: string, updateData: Partial<Company>) => Promise<Company | undefined>;
+  getCompanies: () => Promise<CompanyRow[]>;
+  getCompanyById: (id: string) => Promise<CompanyRow | undefined>;
+  createCompany: (company: CompanyInsert) => Promise<CompanyRow>;
+  updateCompany: (id: string, updateData: CompanyUpdate) => Promise<CompanyRow | undefined>;
   deleteCompany: (id: string) => Promise<boolean>;
   
   // Director operations
-  getDirectors: () => Promise<Director[]>;
-  getDirectorById: (id: string) => Promise<Director | undefined>;
-  createDirector: (director: Partial<Director>) => Promise<Director>;
-  updateDirector: (id: string, updateData: Partial<Director>) => Promise<Director | undefined>;
+  getDirectors: () => Promise<DirectorRow[]>;
+  getDirectorById: (id: string) => Promise<DirectorRow | undefined>;
+  createDirector: (director: DirectorInsert) => Promise<DirectorRow>;
+  updateDirector: (id: string, updateData: DirectorUpdate) => Promise<DirectorRow | undefined>;
   deleteDirector: (id: string) => Promise<boolean>;
   
   // Audit operations
-  getAudits: () => Promise<any[]>;
-  getAuditById: (id: string) => Promise<any | undefined>;
-  createAudit: (auditData: any) => Promise<any>;
-  updateAudit: (id: string, auditData: any) => Promise<any | undefined>;
+  getAudits: () => Promise<AuditRow[]>;
+  getAuditById: (id: string) => Promise<AuditRow | undefined>;
+  createAudit: (auditData: AuditInsert) => Promise<AuditRow>;
+  updateAudit: (id: string, auditData: AuditUpdate) => Promise<AuditRow | undefined>;
   deleteAudit: (id: string) => Promise<boolean>;
   
   // Share Capital Member operations
-  getShareCapitalMembers: () => Promise<ShareCapitalMember[]>;
-  getShareCapitalMemberById: (id: string) => Promise<ShareCapitalMember | undefined>;
-  createShareCapitalMember: (member: Partial<ShareCapitalMember>) => Promise<ShareCapitalMember>;
-  updateShareCapitalMember: (id: string, updateData: Partial<ShareCapitalMember>) => Promise<ShareCapitalMember | undefined>;
+  getShareCapitalMembers: () => Promise<ShareCapitalMemberRow[]>;
+  getShareCapitalMemberById: (id: string) => Promise<ShareCapitalMemberRow | undefined>;
+  createShareCapitalMember: (member: ShareCapitalMemberInsert) => Promise<ShareCapitalMemberRow>;
+  updateShareCapitalMember: (id: string, updateData: ShareCapitalMemberUpdate) => Promise<ShareCapitalMemberRow | undefined>;
   deleteShareCapitalMember: (id: string) => Promise<boolean>;
   
   // Utility operations
