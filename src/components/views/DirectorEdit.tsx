@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,9 +24,9 @@ const DirectorEdit = ({ director, onBack, onSave }: DirectorEditProps) => {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
-      database.updateDirector(formData.id!, formData);
+      await database.updateDirector(formData.id!, formData);
       toast.success("Director updated successfully");
       onSave();
     } catch (error) {

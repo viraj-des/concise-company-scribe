@@ -1,340 +1,409 @@
+
 import { Company, Director, ShareCapitalMember } from "@/types";
-import { v4 as uuid } from 'uuid';
 import { toast } from "sonner";
-import { sampleCompanies, sampleDirectors, sampleAudits, sampleShareCapitalMembers } from "./sampleData";
+import { supabase } from "./supabase";
 
-// In a real application, this would be a connection to a real database
-// For now, we'll use localStorage for persistence
-const COMPANIES_STORAGE_KEY = "corporate-registry-companies";
-const DIRECTORS_STORAGE_KEY = "corporate-registry-directors";
-const AUDITS_STORAGE_KEY = "corporate-registry-audits";
-const SHARE_CAPITAL_MEMBERS_STORAGE_KEY = "corporate-registry-share-capital-members";
-
-const loadFromStorage = <T>(key: string): T[] => {
+// Company CRUD operations
+const getCompanies = async (): Promise<Company[]> => {
   try {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : [];
+    const { data, error } = await supabase
+      .from('companies')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
   } catch (error) {
-    console.error(`Error loading data from localStorage for ${key}:`, error);
+    console.error('Error loading companies:', error);
+    toast.error('Failed to load companies');
     return [];
   }
 };
 
-const saveToStorage = <T>(key: string, data: T[]): void => {
+const getCompanyById = async (id: string): Promise<Company | undefined> => {
   try {
-    localStorage.setItem(key, JSON.stringify(data));
+    const { data, error } = await supabase
+      .from('companies')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) throw error;
+    return data;
   } catch (error) {
-    console.error(`Error saving data to localStorage for ${key}:`, error);
-    toast.error(`Failed to save data: ${(error as Error).message}`);
+    console.error('Error loading company:', error);
+    return undefined;
   }
 };
 
-// Company CRUD operations
-const getCompanies = (): Company[] => {
-  return loadFromStorage<Company>(COMPANIES_STORAGE_KEY);
+const createCompany = async (company: Partial<Company>): Promise<Company> => {
+  try {
+    const { data, error } = await supabase
+      .from('companies')
+      .insert(company)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    toast.success("Company created successfully");
+    return data;
+  } catch (error) {
+    console.error('Error creating company:', error);
+    toast.error("Failed to create company");
+    throw error;
+  }
 };
 
-const getCompanyById = (id: string): Company | undefined => {
-  const companies = getCompanies();
-  return companies.find(company => company.id === id);
-};
-
-const createCompany = (company: Partial<Company>): Company => {
-  const companies = getCompanies();
-  
-  // Create new company with ID
-  const newCompany: Company = {
-    ...company as Company,
-    id: uuid(),
-    branches: company.branches || [],
-    corporateRelations: company.corporateRelations || [],
-    registrations: company.registrations || { pan: "", tan: "" },
-  };
-  
-  companies.push(newCompany);
-  saveToStorage(COMPANIES_STORAGE_KEY, companies);
-  toast.success("Company created successfully");
-  
-  return newCompany;
-};
-
-const updateCompany = (id: string, updateData: Partial<Company>): Company | undefined => {
-  const companies = getCompanies();
-  const index = companies.findIndex(company => company.id === id);
-  
-  if (index !== -1) {
-    // Update company while keeping the same ID
-    const updatedCompany: Company = { ...companies[index], ...updateData };
-    companies[index] = updatedCompany;
-    saveToStorage(COMPANIES_STORAGE_KEY, companies);
+const updateCompany = async (id: string, updateData: Partial<Company>): Promise<Company | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('companies')
+      .update({ ...updateData, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
     toast.success("Company updated successfully");
-    return updatedCompany;
+    return data;
+  } catch (error) {
+    console.error('Error updating company:', error);
+    toast.error("Failed to update company");
+    return undefined;
   }
-  
-  toast.error("Company not found");
-  return undefined;
 };
 
-const deleteCompany = (id: string): boolean => {
-  const companies = getCompanies();
-  const filteredCompanies = companies.filter(company => company.id !== id);
-  
-  if (filteredCompanies.length < companies.length) {
-    saveToStorage(COMPANIES_STORAGE_KEY, filteredCompanies);
+const deleteCompany = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('companies')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
     toast.success("Company deleted successfully");
     return true;
+  } catch (error) {
+    console.error('Error deleting company:', error);
+    toast.error("Failed to delete company");
+    return false;
   }
-  
-  toast.error("Company not found");
-  return false;
 };
 
 // Director CRUD operations
-const getDirectors = (): Director[] => {
-  return loadFromStorage<Director>(DIRECTORS_STORAGE_KEY);
-};
-
-const getDirectorById = (id: string): Director | undefined => {
-  const directors = getDirectors();
-  return directors.find(director => director.id === id);
-};
-
-const createDirector = (director: Partial<Director>): Director => {
-  const directors = getDirectors();
-  
-  // Create new director with ID
-  const newDirector: Director = {
-    ...director as Director,
-    id: uuid(),
-    hasInterestInOtherEntities: director.hasInterestInOtherEntities || false,
-    otherEntities: director.otherEntities || [],
-    companies: director.companies || [],
-  };
-  
-  directors.push(newDirector);
-  saveToStorage(DIRECTORS_STORAGE_KEY, directors);
-  toast.success("Director created successfully");
-  
-  return newDirector;
-};
-
-const updateDirector = (id: string, updateData: Partial<Director>): Director | undefined => {
-  const directors = getDirectors();
-  const index = directors.findIndex(director => director.id === id);
-  
-  if (index !== -1) {
-    // Update director while keeping the same ID
-    const updatedDirector: Director = { ...directors[index], ...updateData };
-    directors[index] = updatedDirector;
-    saveToStorage(DIRECTORS_STORAGE_KEY, directors);
-    toast.success("Director updated successfully");
-    return updatedDirector;
+const getDirectors = async (): Promise<Director[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('directors')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error loading directors:', error);
+    toast.error('Failed to load directors');
+    return [];
   }
-  
-  toast.error("Director not found");
-  return undefined;
 };
 
-const deleteDirector = (id: string): boolean => {
-  const directors = getDirectors();
-  const filteredDirectors = directors.filter(director => director.id !== id);
-  
-  if (filteredDirectors.length < directors.length) {
-    saveToStorage(DIRECTORS_STORAGE_KEY, filteredDirectors);
+const getDirectorById = async (id: string): Promise<Director | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('directors')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error loading director:', error);
+    return undefined;
+  }
+};
+
+const createDirector = async (director: Partial<Director>): Promise<Director> => {
+  try {
+    const { data, error } = await supabase
+      .from('directors')
+      .insert(director)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    toast.success("Director created successfully");
+    return data;
+  } catch (error) {
+    console.error('Error creating director:', error);
+    toast.error("Failed to create director");
+    throw error;
+  }
+};
+
+const updateDirector = async (id: string, updateData: Partial<Director>): Promise<Director | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('directors')
+      .update({ ...updateData, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    toast.success("Director updated successfully");
+    return data;
+  } catch (error) {
+    console.error('Error updating director:', error);
+    toast.error("Failed to update director");
+    return undefined;
+  }
+};
+
+const deleteDirector = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('directors')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
     toast.success("Director deleted successfully");
     return true;
+  } catch (error) {
+    console.error('Error deleting director:', error);
+    toast.error("Failed to delete director");
+    return false;
   }
-  
-  toast.error("Director not found");
-  return false;
 };
 
 // Audit CRUD operations
-const getAudits = (): any[] => {
-  return loadFromStorage(AUDITS_STORAGE_KEY);
-};
-
-const getAuditById = (id: string): any | undefined => {
-  const audits = getAudits();
-  return audits.find(audit => audit.id === id);
-};
-
-const createAudit = (auditData: any): any => {
-  const audits = getAudits();
-  
-  const newAudit = {
-    ...auditData,
-    id: uuid(),
-  };
-  
-  audits.push(newAudit);
-  saveToStorage(AUDITS_STORAGE_KEY, audits);
-  toast.success("Audit created successfully");
-  
-  return newAudit;
-};
-
-const updateAudit = (id: string, updateData: any): any | undefined => {
-  const audits = getAudits();
-  const index = audits.findIndex(audit => audit.id === id);
-  
-  if (index !== -1) {
-    const updatedAudit = { ...audits[index], ...updateData };
-    audits[index] = updatedAudit;
-    saveToStorage(AUDITS_STORAGE_KEY, audits);
-    toast.success("Audit updated successfully");
-    return updatedAudit;
+const getAudits = async (): Promise<any[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('audits')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error loading audits:', error);
+    toast.error('Failed to load audits');
+    return [];
   }
-  
-  toast.error("Audit not found");
-  return undefined;
 };
 
-const deleteAudit = (id: string): boolean => {
-  const audits = getAudits();
-  const filteredAudits = audits.filter(audit => audit.id !== id);
-  
-  if (filteredAudits.length < audits.length) {
-    saveToStorage(AUDITS_STORAGE_KEY, filteredAudits);
+const getAuditById = async (id: string): Promise<any | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('audits')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error loading audit:', error);
+    return undefined;
+  }
+};
+
+const createAudit = async (auditData: any): Promise<any> => {
+  try {
+    const { data, error } = await supabase
+      .from('audits')
+      .insert(auditData)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    toast.success("Audit created successfully");
+    return data;
+  } catch (error) {
+    console.error('Error creating audit:', error);
+    toast.error("Failed to create audit");
+    throw error;
+  }
+};
+
+const updateAudit = async (id: string, updateData: any): Promise<any | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('audits')
+      .update({ ...updateData, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    toast.success("Audit updated successfully");
+    return data;
+  } catch (error) {
+    console.error('Error updating audit:', error);
+    toast.error("Failed to update audit");
+    return undefined;
+  }
+};
+
+const deleteAudit = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('audits')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
     toast.success("Audit deleted successfully");
     return true;
+  } catch (error) {
+    console.error('Error deleting audit:', error);
+    toast.error("Failed to delete audit");
+    return false;
   }
-  
-  toast.error("Audit not found");
-  return false;
 };
 
 // Share Capital Member CRUD operations
-const getShareCapitalMembers = (): ShareCapitalMember[] => {
-  return loadFromStorage<ShareCapitalMember>(SHARE_CAPITAL_MEMBERS_STORAGE_KEY);
-};
-
-const getShareCapitalMemberById = (id: string): ShareCapitalMember | undefined => {
-  const members = getShareCapitalMembers();
-  return members.find(member => member.id === id);
-};
-
-const createShareCapitalMember = (member: Partial<ShareCapitalMember>): ShareCapitalMember => {
-  const members = getShareCapitalMembers();
-  
-  // Create new member with ID
-  const newMember: ShareCapitalMember = {
-    ...member as ShareCapitalMember,
-    id: uuid(),
-  };
-  
-  members.push(newMember);
-  saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, members);
-  toast.success("Share Capital Member created successfully");
-  
-  return newMember;
-};
-
-const updateShareCapitalMember = (id: string, updateData: Partial<ShareCapitalMember>): ShareCapitalMember | undefined => {
-  const members = getShareCapitalMembers();
-  const index = members.findIndex(member => member.id === id);
-  
-  if (index !== -1) {
-    // Update member while keeping the same ID
-    const updatedMember: ShareCapitalMember = { ...members[index], ...updateData };
-    members[index] = updatedMember;
-    saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, members);
-    toast.success("Share Capital Member updated successfully");
-    return updatedMember;
+const getShareCapitalMembers = async (): Promise<ShareCapitalMember[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('share_capital_members')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error loading share capital members:', error);
+    toast.error('Failed to load share capital members');
+    return [];
   }
-  
-  toast.error("Share Capital Member not found");
-  return undefined;
 };
 
-const deleteShareCapitalMember = (id: string): boolean => {
-  const members = getShareCapitalMembers();
-  const filteredMembers = members.filter(member => member.id !== id);
-  
-  if (filteredMembers.length < members.length) {
-    saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, filteredMembers);
+const getShareCapitalMemberById = async (id: string): Promise<ShareCapitalMember | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('share_capital_members')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error loading share capital member:', error);
+    return undefined;
+  }
+};
+
+const createShareCapitalMember = async (member: Partial<ShareCapitalMember>): Promise<ShareCapitalMember> => {
+  try {
+    const { data, error } = await supabase
+      .from('share_capital_members')
+      .insert(member)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    toast.success("Share Capital Member created successfully");
+    return data;
+  } catch (error) {
+    console.error('Error creating share capital member:', error);
+    toast.error("Failed to create share capital member");
+    throw error;
+  }
+};
+
+const updateShareCapitalMember = async (id: string, updateData: Partial<ShareCapitalMember>): Promise<ShareCapitalMember | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('share_capital_members')
+      .update({ ...updateData, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    toast.success("Share Capital Member updated successfully");
+    return data;
+  } catch (error) {
+    console.error('Error updating share capital member:', error);
+    toast.error("Failed to update share capital member");
+    return undefined;
+  }
+};
+
+const deleteShareCapitalMember = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('share_capital_members')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
     toast.success("Share Capital Member deleted successfully");
     return true;
+  } catch (error) {
+    console.error('Error deleting share capital member:', error);
+    toast.error("Failed to delete share capital member");
+    return false;
   }
-  
-  toast.error("Share Capital Member not found");
-  return false;
 };
 
-// Load sample data function
-const loadSampleData = (): void => {
-  // Check if data already exists
-  const companies = getCompanies();
-  const directors = getDirectors();
-  const audits = getAudits();
-  const shareCapitalMembers = getShareCapitalMembers();
-  
-  // Only load sample data if no data exists
-  if (companies.length === 0) {
-    saveToStorage(COMPANIES_STORAGE_KEY, sampleCompanies);
-    toast.success("Sample companies loaded");
+// Utility operations
+const clearAllData = async (): Promise<void> => {
+  try {
+    await Promise.all([
+      supabase.from('companies').delete().neq('id', ''),
+      supabase.from('directors').delete().neq('id', ''),
+      supabase.from('audits').delete().neq('id', ''),
+      supabase.from('share_capital_members').delete().neq('id', '')
+    ]);
+    toast.info("All data cleared");
+  } catch (error) {
+    console.error('Error clearing data:', error);
+    toast.error("Failed to clear data");
   }
-  
-  if (directors.length === 0) {
-    saveToStorage(DIRECTORS_STORAGE_KEY, sampleDirectors);
-    toast.success("Sample directors loaded");
-  }
-  
-  if (audits.length === 0) {
-    saveToStorage(AUDITS_STORAGE_KEY, sampleAudits);
-    toast.success("Sample audits loaded");
-  }
-  
-  if (shareCapitalMembers.length === 0) {
-    saveToStorage(SHARE_CAPITAL_MEMBERS_STORAGE_KEY, sampleShareCapitalMembers);
-    toast.success("Sample share capital members loaded");
-  }
-
-  toast.info("Sample data has been loaded successfully");
 };
 
-// Clear all data (for testing)
-const clearAllData = (): void => {
-  localStorage.removeItem(COMPANIES_STORAGE_KEY);
-  localStorage.removeItem(DIRECTORS_STORAGE_KEY);
-  localStorage.removeItem(AUDITS_STORAGE_KEY);
-  localStorage.removeItem(SHARE_CAPITAL_MEMBERS_STORAGE_KEY);
-  toast.info("All data cleared");
+const loadSampleData = async (): Promise<void> => {
+  toast.info("Sample data loading is not implemented for Supabase yet");
 };
 
 // Define the interface for the database service
 interface Database {
   // Company operations
-  getCompanies: () => Company[];
-  getCompanyById: (id: string) => Company | undefined;
-  createCompany: (company: Partial<Company>) => Company;
-  updateCompany: (id: string, updateData: Partial<Company>) => Company | undefined;
-  deleteCompany: (id: string) => boolean;
+  getCompanies: () => Promise<Company[]>;
+  getCompanyById: (id: string) => Promise<Company | undefined>;
+  createCompany: (company: Partial<Company>) => Promise<Company>;
+  updateCompany: (id: string, updateData: Partial<Company>) => Promise<Company | undefined>;
+  deleteCompany: (id: string) => Promise<boolean>;
   
   // Director operations
-  getDirectors: () => Director[];
-  getDirectorById: (id: string) => Director | undefined;
-  createDirector: (director: Partial<Director>) => Director;
-  updateDirector: (id: string, updateData: Partial<Director>) => Director | undefined;
-  deleteDirector: (id: string) => boolean;
+  getDirectors: () => Promise<Director[]>;
+  getDirectorById: (id: string) => Promise<Director | undefined>;
+  createDirector: (director: Partial<Director>) => Promise<Director>;
+  updateDirector: (id: string, updateData: Partial<Director>) => Promise<Director | undefined>;
+  deleteDirector: (id: string) => Promise<boolean>;
   
   // Audit operations
-  getAudits: () => any[];
-  getAuditById: (id: string) => any | undefined;
-  createAudit: (auditData: any) => any;
-  updateAudit: (id: string, auditData: any) => any | undefined;
-  deleteAudit: (id: string) => boolean;
+  getAudits: () => Promise<any[]>;
+  getAuditById: (id: string) => Promise<any | undefined>;
+  createAudit: (auditData: any) => Promise<any>;
+  updateAudit: (id: string, auditData: any) => Promise<any | undefined>;
+  deleteAudit: (id: string) => Promise<boolean>;
   
   // Share Capital Member operations
-  getShareCapitalMembers: () => ShareCapitalMember[];
-  getShareCapitalMemberById: (id: string) => ShareCapitalMember | undefined;
-  createShareCapitalMember: (member: Partial<ShareCapitalMember>) => ShareCapitalMember;
-  updateShareCapitalMember: (id: string, updateData: Partial<ShareCapitalMember>) => ShareCapitalMember | undefined;
-  deleteShareCapitalMember: (id: string) => boolean;
+  getShareCapitalMembers: () => Promise<ShareCapitalMember[]>;
+  getShareCapitalMemberById: (id: string) => Promise<ShareCapitalMember | undefined>;
+  createShareCapitalMember: (member: Partial<ShareCapitalMember>) => Promise<ShareCapitalMember>;
+  updateShareCapitalMember: (id: string, updateData: Partial<ShareCapitalMember>) => Promise<ShareCapitalMember | undefined>;
+  deleteShareCapitalMember: (id: string) => Promise<boolean>;
   
   // Utility operations
-  clearAllData: () => void;
-  loadSampleData: () => void;
+  clearAllData: () => Promise<void>;
+  loadSampleData: () => Promise<void>;
 }
 
 export const database: Database = {

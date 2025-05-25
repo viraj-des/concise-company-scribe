@@ -42,10 +42,10 @@ const DirectorList = () => {
     loadDirectors();
   }, []);
 
-  const loadDirectors = () => {
+  const loadDirectors = async () => {
     setIsLoading(true);
     try {
-      const data = database.getDirectors();
+      const data = await database.getDirectors();
       setDirectors(data);
     } catch (error) {
       console.error("Error loading directors:", error);
@@ -69,10 +69,10 @@ const DirectorList = () => {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (directorToDeleteId) {
       try {
-        database.deleteDirector(directorToDeleteId);
+        await database.deleteDirector(directorToDeleteId);
         loadDirectors();
         toast.success("Director deleted successfully");
       } catch (error) {

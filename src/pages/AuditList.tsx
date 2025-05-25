@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Search, Edit, Trash, Eye, FileText } from "lucide-react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
@@ -27,18 +26,39 @@ const AuditList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAudit, setSelectedAudit] = useState<any | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'view'>('list');
-  const audits = database.getAudits() || [];
+  const [audits, setAudits] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadAudits();
+  }, []);
+
+  const loadAudits = async () => {
+    setIsLoading(true);
+    try {
+      const data = await database.getAudits();
+      setAudits(data);
+    } catch (error) {
+      console.error("Error loading audits:", error);
+      setAudits([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredAudits = audits.filter((audit) => {
-    const searchable = (audit.auditorName || "") + (audit.firmRegistrationNumber || "");
+    const searchable = (audit.auditor_name || "") + (audit.firm_registration_number || "");
     return searchable.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this audit record?")) {
-      database.deleteAudit(id);
-      // Refresh the component to show updated data
-      navigate("/audits");
+      try {
+        await database.deleteAudit(id);
+        loadAudits();
+      } catch (error) {
+        console.error("Error deleting audit:", error);
+      }
     }
   };
 
@@ -109,12 +129,12 @@ const AuditList = () => {
                       <TableCell className="font-medium">
                         <div className="flex items-center">
                           <FileText className="h-4 w-4 mr-2 text-primary" />
-                          {audit.auditorName}
+                          {audit.auditor_name}
                         </div>
                       </TableCell>
-                      <TableCell>{audit.firmRegistrationNumber}</TableCell>
-                      <TableCell>{audit.appointmentDate ? new Date(audit.appointmentDate).toLocaleDateString() : "N/A"}</TableCell>
-                      <TableCell>{audit.emailId}</TableCell>
+                      <TableCell>{audit.firm_registration_number}</TableCell>
+                      <TableCell>{audit.appointment_date ? new Date(audit.appointment_date).toLocaleDateString() : "N/A"}</TableCell>
+                      <TableCell>{audit.email_id}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button

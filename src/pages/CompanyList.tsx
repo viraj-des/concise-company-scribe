@@ -46,7 +46,7 @@ const CompanyList = () => {
   const loadCompanies = async () => {
     setIsLoading(true);
     try {
-      const companiesData = database.getCompanies();
+      const companiesData = await database.getCompanies();
       setCompanies(companiesData);
     } catch (error) {
       console.error("Error loading companies:", error);
