@@ -35,11 +35,10 @@ const CompanyView = ({ company, onBack, onEdit }: CompanyViewProps) => {
           </CardHeader>
           <CardContent className="space-y-2">
             <div><strong>CIN:</strong> {company.cin}</div>
-            <div><strong>Status:</strong> {company.status}</div>
             <div><strong>Class:</strong> {company.class}</div>
             <div><strong>Category:</strong> {company.category}</div>
-            <div><strong>Sub Category:</strong> {company.subCategory}</div>
-            <div><strong>Date of Incorporation:</strong> {company.dateOfIncorporation ? format(new Date(company.dateOfIncorporation), "PPP") : "N/A"}</div>
+            <div><strong>Sub Category:</strong> {company.subcategory}</div>
+            <div><strong>Date of Incorporation:</strong> {company.incorpDate ? format(new Date(company.incorpDate), "PPP") : "N/A"}</div>
           </CardContent>
         </Card>
 
@@ -48,34 +47,77 @@ const CompanyView = ({ company, onBack, onEdit }: CompanyViewProps) => {
             <CardTitle>Contact Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div><strong>Registered Office:</strong> {company.registeredOfficeAddress}</div>
-            <div><strong>Email:</strong> {company.emailId}</div>
+            <div><strong>Registered Office:</strong> {company.regAddress}</div>
+            <div><strong>Email:</strong> {company.email}</div>
             <div><strong>Website:</strong> {company.website}</div>
             <div><strong>Phone:</strong> {company.phoneNumber}</div>
+            <div><strong>Country:</strong> {company.country}</div>
+            <div><strong>State:</strong> {company.state}</div>
+            <div><strong>City:</strong> {company.city}</div>
+            <div><strong>PIN Code:</strong> {company.pinCode}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Financial Information</CardTitle>
+            <CardTitle>Registration Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div><strong>Authorized Capital:</strong> ₹{company.authorizedCapital?.toLocaleString()}</div>
-            <div><strong>Paid Up Capital:</strong> ₹{company.paidUpCapital?.toLocaleString()}</div>
-            <div><strong>Annual Turnover:</strong> ₹{company.annualTurnover?.toLocaleString()}</div>
+            <div><strong>PAN:</strong> {company.registrations?.pan}</div>
+            <div><strong>TAN:</strong> {company.registrations?.tan}</div>
+            <div><strong>GST:</strong> {company.registrations?.gst}</div>
+            <div><strong>ROC Jurisdiction:</strong> {company.rocJurisdiction}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Activities</CardTitle>
+            <CardTitle>Business Activity</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div><strong>Main Activity:</strong> {company.mainActivity}</div>
-            <div><strong>Sub Activity:</strong> {company.subActivity}</div>
-            <div><strong>Business Activity:</strong> {company.businessActivity}</div>
+            <div><strong>Actual Business Activity:</strong> {company.actualBusinessActivity}</div>
+            <div><strong>Financial Year Start:</strong> {company.fyStart}</div>
+            <div><strong>Financial Year End:</strong> {company.fyEnd}</div>
           </CardContent>
         </Card>
+
+        {company.branches && company.branches.length > 0 && (
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle>Branches</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {company.branches.map((branch, index) => (
+                  <div key={index} className="p-3 bg-gray-50 rounded">
+                    <div><strong>Address:</strong> {branch.address}</div>
+                    <div><strong>RD Jurisdiction:</strong> {branch.rdJurisdiction}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {company.corporateRelations && company.corporateRelations.length > 0 && (
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle>Corporate Relations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {company.corporateRelations.map((relation, index) => (
+                  <div key={index} className="p-3 bg-gray-50 rounded">
+                    <div><strong>Type:</strong> {relation.type}</div>
+                    <div><strong>Name:</strong> {relation.name}</div>
+                    <div><strong>CIN:</strong> {relation.cin}</div>
+                    <div><strong>Percentage:</strong> {relation.percentage}%</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
