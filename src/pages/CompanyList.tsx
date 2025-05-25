@@ -28,7 +28,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Company } from "@/types";
 import { database } from "@/services/database";
-import DashboardLayout from "@/layouts/DashboardLayout";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
+import CompanyView from "@/components/views/CompanyView";
 
 const CompanyList = () => {
   const [companies, setCompanies] = useState<Company[]>([]);

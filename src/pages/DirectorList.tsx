@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Director } from "@/types";
 import { database } from "@/services/database";
-import DashboardLayout from "@/layouts/DashboardLayout";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { toast } from "sonner";
 import DirectorView from "@/components/views/DirectorView";
 import DirectorEdit from "@/components/views/DirectorEdit";
