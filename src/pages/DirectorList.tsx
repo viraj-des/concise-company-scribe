@@ -2,23 +2,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import {
   Eye,
   Edit,
   Trash2,
   Plus,
-  ArrowLeft,
-  Save,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";

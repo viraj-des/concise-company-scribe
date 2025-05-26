@@ -24,8 +24,9 @@ const steps = [
 
 type DirectorInsert = Database['public']['Tables']['directors']['Insert'];
 
+// Use Supabase types for form data
 interface DirectorFormData {
-  // Personal Details
+  // Personal Details - matching database schema
   prefix?: string;
   first_name?: string;
   middle_name?: string;
@@ -40,7 +41,7 @@ interface DirectorFormData {
   date_of_appointment?: string;
   date_of_cessation?: string;
   
-  // Address
+  // Address - matching database schema
   address?: string;
   city?: string;
   state?: string;
@@ -90,7 +91,7 @@ const DirectorForm = () => {
     }
 
     try {
-      // Transform data to match database schema
+      // Transform data to match database schema exactly
       const directorData: DirectorInsert = {
         ...data,
         company_id: selectedCompany.id,

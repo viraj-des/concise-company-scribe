@@ -34,19 +34,14 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
       email: defaultValues.email || "",
       phone_number: defaultValues.phone_number || "",
       pan: defaultValues.pan || "",
-      drivingLicense: defaultValues.drivingLicense || "",
+      driving_license: defaultValues.driving_license || "",
       passport: defaultValues.passport || "",
       aadhar: defaultValues.aadhar || "",
     },
   });
 
   const handleSubmit = (data: FormData) => {
-    // Transform field names to match database schema
-    const transformedData = {
-      ...data,
-      phone_number: data.phone_number, // Ensure correct field name
-    };
-    onNext(transformedData);
+    onNext(data);
   };
 
   return (
@@ -102,7 +97,7 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
               <FormField
                 control={form.control}
-                name="drivingLicense"
+                name="driving_license"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Driving License Number</FormLabel>
