@@ -408,7 +408,7 @@ const loadSampleData = async (): Promise<void> => {
 };
 
 // Define the interface for the database service
-interface Database {
+interface DatabaseService {
   // Company operations
   getCompanies: () => Promise<CompanyRow[]>;
   getCompanyById: (id: string) => Promise<CompanyRow | undefined>;
@@ -442,7 +442,7 @@ interface Database {
   loadSampleData: () => Promise<void>;
 }
 
-export const database: Database = {
+export const database: DatabaseService = {
   getCompanies,
   getCompanyById,
   createCompany,

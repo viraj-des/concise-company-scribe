@@ -59,7 +59,7 @@ const DirectorForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<DirectorFormData>({});
 
-  const handleNext = (data: Partial<DirectorFormData>) => {
+  const handleNext = (data: any) => {
     setFormData((prev) => ({ ...prev, ...data }));
     
     if (currentStep < steps.length) {

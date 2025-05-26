@@ -39,12 +39,12 @@ interface AuditFormData {
   branch_office_address?: string;
   start_date?: string;
   end_date?: string;
-  paid_up_capital?: number;
-  reserves_and_surplus?: number;
-  net_worth?: number;
-  net_profit?: number;
-  amount_of_borrowing?: number;
-  turnover?: number;
+  paid_up_capital?: string | number;
+  reserves_and_surplus?: string | number;
+  net_worth?: string | number;
+  net_profit?: string | number;
+  amount_of_borrowing?: string | number;
+  turnover?: string | number;
 }
 
 const AuditForm = () => {
@@ -81,9 +81,16 @@ const AuditForm = () => {
     }
 
     try {
+      // Convert string values to numbers for database
       const auditData = {
         ...data,
         company_id: selectedCompany.id,
+        paid_up_capital: data.paid_up_capital ? Number(data.paid_up_capital) : null,
+        reserves_and_surplus: data.reserves_and_surplus ? Number(data.reserves_and_surplus) : null,
+        net_worth: data.net_worth ? Number(data.net_worth) : null,
+        net_profit: data.net_profit ? Number(data.net_profit) : null,
+        amount_of_borrowing: data.amount_of_borrowing ? Number(data.amount_of_borrowing) : null,
+        turnover: data.turnover ? Number(data.turnover) : null,
       };
 
       await database.createAudit(auditData);

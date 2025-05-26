@@ -91,7 +91,10 @@ const HierarchyView = () => {
     if (mermaidRef.current && selectedCompany && !loading) {
       const diagram = generateMermaidDiagram();
       mermaidRef.current.innerHTML = `<div class="mermaid">${diagram}</div>`;
-      mermaid.init(undefined, mermaidRef.current.querySelector('.mermaid'));
+      const mermaidElement = mermaidRef.current.querySelector('.mermaid') as HTMLElement;
+      if (mermaidElement) {
+        mermaid.init(undefined, mermaidElement);
+      }
     }
   }, [hierarchyData, selectedCompany, loading]);
 
