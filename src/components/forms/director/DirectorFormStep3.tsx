@@ -18,12 +18,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Director } from "@/types";
 
 type FormData = z.infer<typeof directorStep3Schema>;
 
 interface DirectorFormStep3Props {
-  onNext: (data: Partial<Director>) => void;
+  onNext: (data: any) => void;
   onBack: () => void;
   defaultValues?: Partial<FormData>;
 }
@@ -33,7 +32,7 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
     resolver: zodResolver(directorStep3Schema),
     defaultValues: {
       email: defaultValues.email || "",
-      phoneNumber: defaultValues.phoneNumber || "",
+      phone_number: defaultValues.phone_number || "",
       pan: defaultValues.pan || "",
       drivingLicense: defaultValues.drivingLicense || "",
       passport: defaultValues.passport || "",
@@ -42,7 +41,12 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
   });
 
   const handleSubmit = (data: FormData) => {
-    onNext(data);
+    // Transform field names to match database schema
+    const transformedData = {
+      ...data,
+      phone_number: data.phone_number, // Ensure correct field name
+    };
+    onNext(transformedData);
   };
 
   return (
@@ -70,7 +74,7 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="phone_number"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone Number*</FormLabel>

@@ -42,12 +42,12 @@ interface AuditFormData {
   branch_office_address?: string;
   start_date?: string;
   end_date?: string;
-  paid_up_capital?: string | number;
-  reserves_and_surplus?: string | number;
-  net_worth?: string | number;
-  net_profit?: string | number;
-  amount_of_borrowing?: string | number;
-  turnover?: string | number;
+  paid_up_capital?: string;
+  reserves_and_surplus?: string;
+  net_worth?: string;
+  net_profit?: string;
+  amount_of_borrowing?: string;
+  turnover?: string;
 }
 
 const AuditForm = () => {
