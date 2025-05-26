@@ -1,23 +1,42 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save } from "lucide-react";
-import { Director } from "@/types";
 import { database } from "@/services/database";
 import { toast } from "sonner";
 
+// Use Supabase types
+type DirectorRow = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  din: string | null;
+  email: string | null;
+  phone_number: string | null;
+  designation: string | null;
+  nationality: string | null;
+  occupation: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  pin_code: string | null;
+  [key: string]: any;
+};
+
 interface DirectorEditProps {
-  director: Director;
+  director: DirectorRow;
   onBack: () => void;
   onSave: () => void;
 }
 
 const DirectorEdit = ({ director, onBack, onSave }: DirectorEditProps) => {
-  const [formData, setFormData] = useState<Director>(director);
+  const [formData, setFormData] = useState<DirectorRow>(director);
 
-  const handleInputChange = (field: keyof Director, value: string) => {
+  const handleInputChange = (field: keyof DirectorRow, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -61,23 +80,23 @@ const DirectorEdit = ({ director, onBack, onSave }: DirectorEditProps) => {
               <Label htmlFor="firstName">First Name</Label>
               <Input
                 id="firstName"
-                value={formData.firstName}
-                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                value={formData.first_name || ''}
+                onChange={(e) => handleInputChange('first_name', e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor="lastName">Last Name</Label>
               <Input
                 id="lastName"
-                value={formData.lastName}
-                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                value={formData.last_name || ''}
+                onChange={(e) => handleInputChange('last_name', e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor="din">DIN</Label>
               <Input
                 id="din"
-                value={formData.din}
+                value={formData.din || ''}
                 onChange={(e) => handleInputChange('din', e.target.value)}
               />
             </div>
@@ -86,7 +105,7 @@ const DirectorEdit = ({ director, onBack, onSave }: DirectorEditProps) => {
               <Input
                 id="email"
                 type="email"
-                value={formData.email}
+                value={formData.email || ''}
                 onChange={(e) => handleInputChange('email', e.target.value)}
               />
             </div>
@@ -102,7 +121,7 @@ const DirectorEdit = ({ director, onBack, onSave }: DirectorEditProps) => {
               <Label htmlFor="designation">Designation</Label>
               <Input
                 id="designation"
-                value={formData.designation}
+                value={formData.designation || ''}
                 onChange={(e) => handleInputChange('designation', e.target.value)}
               />
             </div>
@@ -110,15 +129,15 @@ const DirectorEdit = ({ director, onBack, onSave }: DirectorEditProps) => {
               <Label htmlFor="phoneNumber">Phone Number</Label>
               <Input
                 id="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                value={formData.phone_number || ''}
+                onChange={(e) => handleInputChange('phone_number', e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor="nationality">Nationality</Label>
               <Input
                 id="nationality"
-                value={formData.nationality}
+                value={formData.nationality || ''}
                 onChange={(e) => handleInputChange('nationality', e.target.value)}
               />
             </div>
@@ -126,7 +145,7 @@ const DirectorEdit = ({ director, onBack, onSave }: DirectorEditProps) => {
               <Label htmlFor="occupation">Occupation</Label>
               <Input
                 id="occupation"
-                value={formData.occupation}
+                value={formData.occupation || ''}
                 onChange={(e) => handleInputChange('occupation', e.target.value)}
               />
             </div>

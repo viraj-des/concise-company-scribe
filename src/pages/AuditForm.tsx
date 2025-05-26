@@ -53,7 +53,7 @@ const AuditForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<AuditFormData>({});
 
-  const handleNext = (data: Partial<AuditFormData>) => {
+  const handleNext = (data: any) => {
     setFormData((prev) => ({ ...prev, ...data }));
     
     if (currentStep < steps.length) {
