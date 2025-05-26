@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -24,17 +25,18 @@ import {
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShareCapitalMember } from "@/types";
 import { database } from "@/services/database";
-import { format } from "date-fns";
 import ShareCapitalMemberView from "@/components/views/ShareCapitalMemberView";
 import ShareCapitalMemberEdit from "@/components/views/ShareCapitalMemberEdit";
 import HierarchyView from "@/components/views/HierarchyView";
+import { Database as SupabaseDatabase } from "@/integrations/supabase/types";
+
+type ShareCapitalMemberRow = SupabaseDatabase['public']['Tables']['share_capital_members']['Row'];
 
 const ShareCapitalMemberList = () => {
-  const [members, setMembers] = useState<ShareCapitalMember[]>([]);
+  const [members, setMembers] = useState<ShareCapitalMemberRow[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMember, setSelectedMember] = useState<ShareCapitalMember | null>(null);
+  const [selectedMember, setSelectedMember] = useState<ShareCapitalMemberRow | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'view' | 'edit' | 'hierarchy'>('list');
 
   useEffect(() => {
@@ -54,9 +56,7 @@ const ShareCapitalMemberList = () => {
   // Filter members based on search term
   const filteredMembers = members.filter(
     (member) => 
-      member.memberDetails?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.memberDetails?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `${member.memberDetails?.firstName || ""} ${member.memberDetails?.lastName || ""}`.toLowerCase().includes(searchTerm.toLowerCase())
+      member.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDeleteMember = async (id: string) => {
@@ -71,12 +71,12 @@ const ShareCapitalMemberList = () => {
     }
   };
 
-  const handleViewMember = (member: ShareCapitalMember) => {
+  const handleViewMember = (member: ShareCapitalMemberRow) => {
     setSelectedMember(member);
     setViewMode('view');
   };
 
-  const handleEditMember = (member: ShareCapitalMember) => {
+  const handleEditMember = (member: ShareCapitalMemberRow) => {
     setSelectedMember(member);
     setViewMode('edit');
   };
@@ -179,10 +179,10 @@ const ShareCapitalMemberList = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Member Name</TableHead>
-                <TableHead>Type of Capital</TableHead>
-                <TableHead>Number of Shares</TableHead>
-                <TableHead>Member Since</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Share Type</TableHead>
+                <TableHead>Shares Held</TableHead>
+                <TableHead>Holding %</TableHead>
+                <TableHead>Category</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -193,20 +193,13 @@ const ShareCapitalMemberList = () => {
                     <TableCell className="font-medium">
                       <div className="flex items-center">
                         <Users className="h-4 w-4 mr-2 text-primary" />
-                        {member.memberDetails?.prefix} {member.memberDetails?.firstName} {member.memberDetails?.middleName} {member.memberDetails?.lastName}
+                        {member.name}
                       </div>
                     </TableCell>
-                    <TableCell>{member.authorizedCapital?.capitalType}</TableCell>
-                    <TableCell>{member.equityDetails?.totalShares || 0}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                        {member.equityDetails?.dateOfBecomingMember ? 
-                          format(new Date(member.equityDetails.dateOfBecomingMember), "PPP") : 
-                          "N/A"}
-                      </div>
-                    </TableCell>
-                    <TableCell>{member.memberDetails?.status}</TableCell>
+                    <TableCell>{member.share_type}</TableCell>
+                    <TableCell>{member.shares_held || 0}</TableCell>
+                    <TableCell>{member.holding_percentage || 0}%</TableCell>
+                    <TableCell>{member.category}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
                         <Button 

@@ -22,18 +22,20 @@ import {
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Director } from "@/types";
 import { database } from "@/services/database";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { toast } from "sonner";
 import DirectorView from "@/components/views/DirectorView";
 import DirectorEdit from "@/components/views/DirectorEdit";
+import { Database } from "@/integrations/supabase/types";
+
+type DirectorRow = Database['public']['Tables']['directors']['Row'];
 
 const DirectorList = () => {
-  const [directors, setDirectors] = useState<Director[]>([]);
+  const [directors, setDirectors] = useState<DirectorRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewingDirector, setViewingDirector] = useState<Director | null>(null);
-  const [editingDirector, setEditingDirector] = useState<Director | null>(null);
+  const [viewingDirector, setViewingDirector] = useState<DirectorRow | null>(null);
+  const [editingDirector, setEditingDirector] = useState<DirectorRow | null>(null);
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [directorToDeleteId, setDirectorToDeleteId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -56,11 +58,11 @@ const DirectorList = () => {
     }
   };
 
-  const handleView = (director: Director) => {
+  const handleView = (director: DirectorRow) => {
     setViewingDirector(director);
   };
 
-  const handleEdit = (director: Director) => {
+  const handleEdit = (director: DirectorRow) => {
     setEditingDirector(director);
   };
 
@@ -95,8 +97,8 @@ const DirectorList = () => {
     setEditingDirector(null);
   };
 
-  const getDirectorDisplayName = (director: Director) => {
-    return `${director.prefix} ${director.firstName} ${director.middleName || ''} ${director.lastName}`.trim();
+  const getDirectorDisplayName = (director: DirectorRow) => {
+    return `${director.prefix || ''} ${director.first_name} ${director.middle_name || ''} ${director.last_name}`.trim();
   };
 
   return (
