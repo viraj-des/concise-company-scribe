@@ -12,6 +12,7 @@ import DirectorFormStep5 from "@/components/forms/director/DirectorFormStep5";
 import { database } from "@/services/database";
 import { useCompany } from "@/contexts/CompanyContext";
 import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types";
 
 const steps = [
   "Personal Details",
@@ -20,6 +21,8 @@ const steps = [
   "Entity Interests",
   "Company Associations",
 ];
+
+type DirectorInsert = Database['public']['Tables']['directors']['Insert'];
 
 interface DirectorFormData {
   // Personal Details
@@ -88,7 +91,7 @@ const DirectorForm = () => {
 
     try {
       // Transform data to match database schema
-      const directorData = {
+      const directorData: DirectorInsert = {
         ...data,
         company_id: selectedCompany.id,
         // Ensure required fields

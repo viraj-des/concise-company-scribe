@@ -9,11 +9,14 @@ import AuditFormStep2 from "@/components/forms/audit/AuditFormStep2";
 import { database } from "@/services/database";
 import { useCompany } from "@/contexts/CompanyContext";
 import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types";
 
 const steps = [
   "Auditor Information",
   "Financial Information"
 ];
+
+type AuditInsert = Database['public']['Tables']['audits']['Insert'];
 
 interface AuditFormData {
   auditor_type?: string;
@@ -82,7 +85,7 @@ const AuditForm = () => {
 
     try {
       // Convert string values to numbers for database
-      const auditData = {
+      const auditData: AuditInsert = {
         ...data,
         company_id: selectedCompany.id,
         paid_up_capital: data.paid_up_capital ? Number(data.paid_up_capital) : null,
