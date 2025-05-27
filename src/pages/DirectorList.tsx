@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import DirectorView from "@/components/views/DirectorView";
 import DirectorEdit from "@/components/views/DirectorEdit";
 import { Database } from "@/integrations/supabase/types";
-import { Director } from "@/types";
+import { Director, EntityInterest } from "@/types";
 
 type DirectorRow = Database['public']['Tables']['directors']['Row'];
 
@@ -55,10 +55,67 @@ const DirectorList = () => {
   };
 
   const transformDirectorRowToDirector = (directorRow: DirectorRow): Director => {
+    // Safely parse JSON arrays and provide proper typing
+    const other_entities: EntityInterest[] = Array.isArray(directorRow.other_entities) 
+      ? (directorRow.other_entities as any[]).map((entity: any) => ({
+          id: entity.id || '',
+          entity_name: entity.entity_name || '',
+          registration_number: entity.registration_number || '',
+          designation: entity.designation || '',
+          date_of_appointment: entity.date_of_appointment || '',
+          date_of_cessation: entity.date_of_cessation,
+          shareholding_percentage: entity.shareholding_percentage || 0,
+          shareholding_amount: entity.shareholding_amount || 0,
+        }))
+      : [];
+
+    const companies = Array.isArray(directorRow.companies) 
+      ? (directorRow.companies as any[]).map((company: any) => ({
+          id: company.id || '',
+          name: company.name || '',
+          cin: company.cin || '',
+          category: company.category || '',
+          class: company.class || '',
+          subcategory: company.subcategory || '',
+          incorpDate: company.incorpDate || '',
+          fyStart: company.fyStart || '',
+          fyEnd: company.fyEnd || '',
+          country: company.country || '',
+          state: company.state || '',
+          city: company.city || '',
+          pinCode: company.pinCode || '',
+          rocJurisdiction: company.rocJurisdiction || '',
+          branches: company.branches || [],
+          corporateRelations: company.corporateRelations || [],
+          registrations: company.registrations || { pan: '', tan: '' }
+        }))
+      : [];
+
     return {
-      ...directorRow,
-      other_entities: Array.isArray(directorRow.other_entities) ? directorRow.other_entities : [],
-      companies: Array.isArray(directorRow.companies) ? directorRow.companies : [],
+      id: directorRow.id,
+      prefix: directorRow.prefix,
+      first_name: directorRow.first_name,
+      middle_name: directorRow.middle_name,
+      last_name: directorRow.last_name,
+      din: directorRow.din,
+      email: directorRow.email,
+      phone_number: directorRow.phone_number,
+      designation: directorRow.designation,
+      designation_category: directorRow.designation_category,
+      designation_subcategory: directorRow.designation_subcategory,
+      nationality: directorRow.nationality,
+      occupation: directorRow.occupation,
+      date_of_birth: directorRow.date_of_birth,
+      date_of_appointment: directorRow.date_of_appointment,
+      date_of_cessation: directorRow.date_of_cessation,
+      present_address: directorRow.address,
+      present_city: directorRow.city,
+      present_state: directorRow.state,
+      present_country: directorRow.country,
+      present_pin_code: directorRow.pin_code,
+      has_interest_in_other_entities: directorRow.has_interest_in_other_entities || false,
+      other_entities,
+      companies,
     } as Director;
   };
 
@@ -200,7 +257,10 @@ const DirectorList = () => {
               onBack={closeModal}
               onEdit={() => {
                 closeModal();
-                handleEdit(directors.find(d => d.id === viewingDirector.id)!);
+                const originalDirector = directors.find(d => d.id === viewingDirector.id);
+                if (originalDirector) {
+                  handleEdit(originalDirector);
+                }
               }}
             />
           )}

@@ -1,4 +1,3 @@
-
 export interface Company {
   id?: string;
   cin: string;
@@ -125,6 +124,18 @@ export interface Director {
   has_interest_in_other_entities?: boolean;
   other_entities?: EntityInterest[];
   companies?: Company[];
+  // Database-only fields that don't have present/permanent prefixes
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  pin_code?: string;
+  company_id?: string;
+  qualification?: string;
+  experience?: string;
+  other_directorships?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface EntityInterest {
