@@ -32,27 +32,27 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const auditStep1Schema = z.object({
-  auditorType: z.string().min(1, "Auditor type is required"),
-  auditorName: z.string().min(3, "Auditor name must be at least 3 characters"),
+  auditor_type: z.string().min(1, "Auditor type is required"),
+  auditor_name: z.string().min(3, "Auditor name must be at least 3 characters"),
   address: z.string().min(1, "Address is required"),
-  pinCode: z.string().min(1, "PIN code is required"),
+  pin_code: z.string().min(1, "PIN code is required"),
   country: z.string().min(1, "Country is required"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
-  appointmentDate: z.string().min(1, "Appointment date is required"),
-  cessationDate: z.string().optional(),
-  cessationType: z.string().optional(),
-  firmRegistrationNumber: z.string().min(1, "Firm registration number is required"),
-  membershipNumber: z.string().min(1, "Membership number is required"),
-  durationOfAppointment: z.string().min(1, "Duration of appointment is required"),
-  panOfFirm: z.string().min(1, "PAN of firm is required"),
-  panOfSigningPartner: z.string().min(1, "PAN of signing partner is required"),
-  emailId: z.string().email("Please enter a valid email"),
-  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-  srnOfAdt: z.string().min(1, "SRN of ADT is required"),
-  modeOfAppointment: z.string().min(1, "Mode of appointment is required"),
-  attendedAgm: z.boolean().optional(),
-  branchOfficeAddress: z.string().optional(),
+  appointment_date: z.string().min(1, "Appointment date is required"),
+  cessation_date: z.string().optional(),
+  cessation_type: z.string().optional(),
+  firm_registration_number: z.string().min(1, "Firm registration number is required"),
+  membership_number: z.string().min(1, "Membership number is required"),
+  duration_of_appointment: z.string().min(1, "Duration of appointment is required"),
+  pan_of_firm: z.string().min(1, "PAN of firm is required"),
+  pan_of_signing_partner: z.string().min(1, "PAN of signing partner is required"),
+  email_id: z.string().email("Please enter a valid email"),
+  phone_number: z.string().min(10, "Phone number must be at least 10 digits"),
+  srn_of_adt: z.string().min(1, "SRN of ADT is required"),
+  mode_of_appointment: z.string().min(1, "Mode of appointment is required"),
+  attended_agm: z.boolean().optional(),
+  branch_office_address: z.string().optional(),
 });
 
 type FormData = z.infer<typeof auditStep1Schema>;
@@ -66,27 +66,27 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
   const form = useForm<FormData>({
     resolver: zodResolver(auditStep1Schema),
     defaultValues: {
-      auditorType: defaultValues.auditorType || "",
-      auditorName: defaultValues.auditorName || "",
+      auditor_type: defaultValues.auditor_type || "",
+      auditor_name: defaultValues.auditor_name || "",
       address: defaultValues.address || "",
-      pinCode: defaultValues.pinCode || "",
+      pin_code: defaultValues.pin_code || "",
       country: defaultValues.country || "",
       state: defaultValues.state || "",
       city: defaultValues.city || "",
-      appointmentDate: defaultValues.appointmentDate || "",
-      cessationDate: defaultValues.cessationDate || "",
-      cessationType: defaultValues.cessationType || "",
-      firmRegistrationNumber: defaultValues.firmRegistrationNumber || "",
-      membershipNumber: defaultValues.membershipNumber || "",
-      durationOfAppointment: defaultValues.durationOfAppointment || "",
-      panOfFirm: defaultValues.panOfFirm || "",
-      panOfSigningPartner: defaultValues.panOfSigningPartner || "",
-      emailId: defaultValues.emailId || "",
-      phoneNumber: defaultValues.phoneNumber || "",
-      srnOfAdt: defaultValues.srnOfAdt || "",
-      modeOfAppointment: defaultValues.modeOfAppointment || "",
-      attendedAgm: defaultValues.attendedAgm || false,
-      branchOfficeAddress: defaultValues.branchOfficeAddress || "",
+      appointment_date: defaultValues.appointment_date || "",
+      cessation_date: defaultValues.cessation_date || "",
+      cessation_type: defaultValues.cessation_type || "",
+      firm_registration_number: defaultValues.firm_registration_number || "",
+      membership_number: defaultValues.membership_number || "",
+      duration_of_appointment: defaultValues.duration_of_appointment || "",
+      pan_of_firm: defaultValues.pan_of_firm || "",
+      pan_of_signing_partner: defaultValues.pan_of_signing_partner || "",
+      email_id: defaultValues.email_id || "",
+      phone_number: defaultValues.phone_number || "",
+      srn_of_adt: defaultValues.srn_of_adt || "",
+      mode_of_appointment: defaultValues.mode_of_appointment || "",
+      attended_agm: defaultValues.attended_agm || false,
+      branch_office_address: defaultValues.branch_office_address || "",
     },
   });
 
@@ -105,7 +105,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
-                name="auditorType"
+                name="auditor_type"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Auditor Type*</FormLabel>
@@ -129,7 +129,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="auditorName"
+                name="auditor_name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name of Auditor/Proprietary Concern/Partnership Firm*</FormLabel>
@@ -157,7 +157,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="pinCode"
+                name="pin_code"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>PIN Code*</FormLabel>
@@ -240,7 +240,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="appointmentDate"
+                name="appointment_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Date of Appointment*</FormLabel>
@@ -281,7 +281,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="cessationDate"
+                name="cessation_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Date of Cessation</FormLabel>
@@ -322,7 +322,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="cessationType"
+                name="cessation_type"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Cessation Type</FormLabel>
@@ -345,7 +345,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="firmRegistrationNumber"
+                name="firm_registration_number"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Firm Registration Number*</FormLabel>
@@ -359,7 +359,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="membershipNumber"
+                name="membership_number"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Membership Number of Auditor/Proprietor*</FormLabel>
@@ -373,7 +373,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="durationOfAppointment"
+                name="duration_of_appointment"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Duration of Appointment*</FormLabel>
@@ -387,7 +387,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="panOfFirm"
+                name="pan_of_firm"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>PAN of Firm*</FormLabel>
@@ -401,7 +401,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="panOfSigningPartner"
+                name="pan_of_signing_partner"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>PAN of Signing Partner/Auditor*</FormLabel>
@@ -415,7 +415,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="emailId"
+                name="email_id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email Id*</FormLabel>
@@ -429,7 +429,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="phone_number"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone Number*</FormLabel>
@@ -443,7 +443,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="srnOfAdt"
+                name="srn_of_adt"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>SRN of ADT*</FormLabel>
@@ -457,7 +457,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="modeOfAppointment"
+                name="mode_of_appointment"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Mode of Appointment*</FormLabel>
@@ -480,7 +480,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
               <FormField
                 control={form.control}
-                name="branchOfficeAddress"
+                name="branch_office_address"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Branch Office Address</FormLabel>
@@ -495,7 +495,7 @@ const AuditFormStep1 = ({ onNext, defaultValues = {} }: AuditFormStep1Props) => 
 
             <FormField
               control={form.control}
-              name="attendedAgm"
+              name="attended_agm"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>

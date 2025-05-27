@@ -18,43 +18,11 @@ const steps = [
 
 type AuditInsert = Database['public']['Tables']['audits']['Insert'];
 
-interface AuditFormData {
-  auditor_type?: string;
-  auditor_name?: string;
-  address?: string;
-  pin_code?: string;
-  country?: string;
-  state?: string;
-  city?: string;
-  appointment_date?: string;
-  cessation_date?: string;
-  cessation_type?: string;
-  firm_registration_number?: string;
-  membership_number?: string;
-  duration_of_appointment?: string;
-  pan_of_firm?: string;
-  pan_of_signing_partner?: string;
-  email_id?: string;
-  phone_number?: string;
-  srn_of_adt?: string;
-  mode_of_appointment?: string;
-  attended_agm?: boolean;
-  branch_office_address?: string;
-  start_date?: string;
-  end_date?: string;
-  paid_up_capital?: string;
-  reserves_and_surplus?: string;
-  net_worth?: string;
-  net_profit?: string;
-  amount_of_borrowing?: string;
-  turnover?: string;
-}
-
 const AuditForm = () => {
   const navigate = useNavigate();
   const { selectedCompany } = useCompany();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<AuditFormData>({});
+  const [formData, setFormData] = useState<Partial<AuditInsert>>({});
 
   const handleNext = (data: any) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -75,7 +43,7 @@ const AuditForm = () => {
     }
   };
 
-  const handleSubmit = async (data: AuditFormData) => {
+  const handleSubmit = async (data: Partial<AuditInsert>) => {
     console.log("Submitting audit data:", data);
     
     if (!selectedCompany) {
@@ -97,6 +65,7 @@ const AuditForm = () => {
       };
 
       await database.createAudit(auditData);
+      toast.success("Audit information created successfully");
       navigate("/audits");
     } catch (error) {
       console.error("Error creating audit:", error);
