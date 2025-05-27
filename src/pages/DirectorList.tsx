@@ -101,7 +101,6 @@ const DirectorList = () => {
       email: directorRow.email,
       phone_number: directorRow.phone_number,
       designation: directorRow.designation,
-      // These fields don't exist in DirectorRow, so we set them as undefined
       designation_category: undefined,
       designation_subcategory: undefined,
       nationality: directorRow.nationality,
@@ -117,6 +116,18 @@ const DirectorList = () => {
       has_interest_in_other_entities: directorRow.has_interest_in_other_entities || false,
       other_entities,
       companies,
+      // Include all DirectorRow fields to ensure compatibility
+      address: directorRow.address,
+      city: directorRow.city,
+      state: directorRow.state,
+      country: directorRow.country,
+      pin_code: directorRow.pin_code,
+      company_id: directorRow.company_id,
+      qualification: directorRow.qualification,
+      experience: directorRow.experience,
+      other_directorships: directorRow.other_directorships,
+      created_at: directorRow.created_at,
+      updated_at: directorRow.updated_at,
     } as Director;
   };
 
