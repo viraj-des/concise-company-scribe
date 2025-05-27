@@ -1,574 +1,158 @@
+import { Company, Director } from "@/types";
 
-import { Company, Director, ShareCapitalMember } from "@/types";
-import { v4 as uuid } from 'uuid';
-
-// Sample Companies
 export const sampleCompanies: Company[] = [
   {
-    id: uuid(),
-    name: "TechSolutions Inc.",
-    cin: "L12345MH2020PLC987654",
-    website: "https://techsolutions.example.com",
-    incorpDate: "2020-06-15",
-    category: "Private",
-    class: "Limited by Shares",
-    subcategory: "Non-government company",
-    phoneNumber: "+91 9876543210",
-    email: "contact@techsolutions.example.com",
+    id: "cmp-1",
+    cin: "U12345MH2019PTC123456",
+    name: "Acme Corp Pvt Ltd",
+    incorpDate: "2019-01-01",
+    category: "Company limited by Shares",
+    class: "Private",
+    subcategory: "Non-govt company",
     fyStart: "04-01",
     fyEnd: "03-31",
-    regAddress: "123 Tech Park, Andheri East",
     country: "India",
     state: "Maharashtra",
     city: "Mumbai",
-    pinCode: "400093",
-    rocJurisdiction: "RoC-Mumbai",
-    branches: [
-      {
-        id: uuid(),
-        address: "456 Business Hub, Powai",
-        rdJurisdiction: "Mumbai"
-      }
-    ],
-    corporateRelations: [],
-    registrations: {
-      pan: "AAACT1234A",
-      tan: "MUMT12345A"
-    },
-    actualBusinessActivity: "IT Services and Software Development"
-  },
-  {
-    id: uuid(),
-    name: "GreenEnergy Solutions Pvt. Ltd.",
-    cin: "U67890MH2019PTC876543",
-    website: "https://greenenergy.example.com",
-    incorpDate: "2019-08-10",
-    category: "Private",
-    class: "Limited by Shares",
-    subcategory: "Non-government company",
-    phoneNumber: "+91 8765432109",
-    email: "info@greenenergy.example.com",
-    fyStart: "04-01",
-    fyEnd: "03-31",
-    regAddress: "789 Green Building, Worli",
-    country: "India",
-    state: "Maharashtra",
-    city: "Mumbai",
-    pinCode: "400018",
-    rocJurisdiction: "RoC-Mumbai",
+    pinCode: "400001",
+    rocJurisdiction: "Mumbai",
     branches: [],
     corporateRelations: [],
-    registrations: {
-      pan: "AAAGE5678B",
-      tan: "MUMG23456B"
-    },
-    actualBusinessActivity: "Renewable Energy Solutions"
+    registrations: { pan: "ABCDE1234F", tan: "MUM12345A" },
   },
   {
-    id: uuid(),
-    name: "HealthPlus Medical Systems Ltd.",
-    cin: "L54321DL2018PLC765432",
-    website: "https://healthplus.example.com",
-    incorpDate: "2018-03-22",
-    category: "Public",
-    class: "Limited by Shares",
-    subcategory: "Non-government company",
-    phoneNumber: "+91 7654321098",
-    email: "contact@healthplus.example.com",
+    id: "cmp-2",
+    cin: "L98765KA2018PLC654321",
+    name: "Beta Industries Ltd",
+    incorpDate: "2018-05-20",
+    category: "Company limited by Shares",
+    class: "Public",
+    subcategory: "Non-govt company",
     fyStart: "04-01",
     fyEnd: "03-31",
-    regAddress: "321 Healthcare Avenue, Connaught Place",
     country: "India",
-    state: "Delhi",
-    city: "New Delhi",
-    pinCode: "110001",
-    rocJurisdiction: "RoC-Delhi",
-    branches: [
-      {
-        id: uuid(),
-        address: "654 Hospital Complex, Gurgaon",
-        rdJurisdiction: "Gurgaon"
-      },
-      {
-        id: uuid(),
-        address: "987 Medical Center, Noida",
-        rdJurisdiction: "Noida"
-      }
-    ],
+    state: "Karnataka",
+    city: "Bangalore",
+    pinCode: "560001",
+    rocJurisdiction: "Bangalore",
+    branches: [],
     corporateRelations: [],
-    registrations: {
-      pan: "AAAHP9876C",
-      tan: "DELH34567C"
-    },
-    actualBusinessActivity: "Healthcare Services and Medical Systems"
-  }
+    registrations: { pan: "FGHIJ5678K", tan: "BNG54321B" },
+  },
+  {
+    id: "cmp-3",
+    cin: "O54321TN2020OPC112233",
+    name: "Gamma One Person Company",
+    incorpDate: "2020-11-11",
+    category: "Company limited by Shares",
+    class: "OPC",
+    subcategory: "Non-govt company",
+    fyStart: "04-01",
+    fyEnd: "03-31",
+    country: "India",
+    state: "Tamil Nadu",
+    city: "Chennai",
+    pinCode: "600002",
+    rocJurisdiction: "Chennai",
+    branches: [],
+    corporateRelations: [],
+    registrations: { pan: "KLMNO9012L", tan: "CHN21098C" },
+  },
 ];
 
-// Sample Directors
 export const sampleDirectors: Director[] = [
   {
-    id: uuid(),
-    designation: "Managing Director",
-    designationCategory: "Professional",
-    designationSubcategory: "Executive Director",
-    din: "00123456",
+    id: "dir-1",
     prefix: "Mr",
-    firstName: "Rajesh",
-    lastName: "Sharma",
-    fatherName: "Mukesh Sharma",
-    presentAddress: "123 Directors Colony, Juhu",
-    presentCountry: "India",
-    presentState: "Maharashtra",
-    presentCity: "Mumbai",
-    presentPinCode: "400049",
-    isPermanentSameAsPresent: true,
-    email: "rajesh.sharma@example.com",
-    phoneNumber: "+91 9876543210",
-    pan: "ABCPS1234D",
-    occupation: "Business Executive",
-    dateOfBirth: "1975-05-15",
+    first_name: "Rajesh",
+    middle_name: "Kumar",
+    last_name: "Sharma",
+    din: "12345678",
+    email: "rajesh.sharma@email.com",
+    phone_number: "+91-9876543210",
+    designation: "Managing Director",
+    designation_category: "Promoter",
+    designation_subcategory: "Executive Director",
     nationality: "Indian",
-    dateOfAppointment: "2020-06-15",
-    hasInterestInOtherEntities: false,
-    otherEntities: [],
-    companies: [sampleCompanies[0], sampleCompanies[1]]
-  },
-  {
-    id: uuid(),
-    designation: "Director",
-    designationCategory: "Independent",
-    designationSubcategory: "Non-Executive Director",
-    din: "00234567",
-    prefix: "Ms",
-    firstName: "Priya",
-    lastName: "Patel",
-    fatherName: "Suresh Patel",
-    presentAddress: "456 Directors Avenue, Bandra",
-    presentCountry: "India",
-    presentState: "Maharashtra",
-    presentCity: "Mumbai",
-    presentPinCode: "400050",
-    isPermanentSameAsPresent: false,
-    permanentAddress: "789 Family Home, Surat",
-    permanentCountry: "India",
-    permanentState: "Gujarat",
-    permanentCity: "Surat",
-    permanentPinCode: "395007",
-    email: "priya.patel@example.com",
-    phoneNumber: "+91 8765432109",
-    pan: "DEFPP5678E",
-    occupation: "Financial Consultant",
-    dateOfBirth: "1980-10-25",
-    nationality: "Indian",
-    dateOfAppointment: "2019-09-12",
-    hasInterestInOtherEntities: true,
-    otherEntities: [
+    occupation: "Business",
+    date_of_birth: "1975-05-15",
+    date_of_appointment: "2020-01-01",
+    present_address: "123 Business District, Mumbai",
+    present_city: "Mumbai",
+    present_state: "Maharashtra",
+    present_country: "India",
+    present_pin_code: "400001",
+    has_interest_in_other_entities: true,
+    other_entities: [
       {
-        id: uuid(),
-        entityName: "Finance Advisory Services LLP",
-        registrationNumber: "AAA-1234",
-        designation: "Partner",
-        dateOfAppointment: "2018-05-20",
-        shareholdingPercentage: 25,
-        shareholdingAmount: 250000
-      }
+        id: "entity-1",
+        entity_name: "Sharma Industries Pvt Ltd",
+        registration_number: "U12345MH2019PTC123456",
+        designation: "Director",
+        date_of_appointment: "2019-06-01",
+        shareholding_percentage: 25.5,
+        shareholding_amount: 2550000,
+      },
     ],
-    companies: [sampleCompanies[1], sampleCompanies[2]]
+    companies: [],
   },
   {
-    id: uuid(),
-    designation: "Whole Time Director",
-    designationCategory: "Promoter",
-    designationSubcategory: "Executive Director",
-    din: "00345678",
-    prefix: "Dr",
-    firstName: "Anil",
-    lastName: "Kapoor",
-    fatherName: "Ramesh Kapoor",
-    presentAddress: "789 Directors Park, Defence Colony",
-    presentCountry: "India",
-    presentState: "Delhi",
-    presentCity: "New Delhi",
-    presentPinCode: "110024",
-    isPermanentSameAsPresent: true,
-    email: "anil.kapoor@example.com",
-    phoneNumber: "+91 7654321098",
-    pan: "GHIAK8901F",
-    occupation: "Medical Professional",
-    dateOfBirth: "1970-03-18",
+    id: "dir-2",
+    prefix: "Ms",
+    first_name: "Priya",
+    last_name: "Patel",
+    din: "87654321",
+    email: "priya.patel@email.com",
+    phone_number: "+91-9123456789",
+    designation: "Director",
+    designation_category: "Independent",
+    designation_subcategory: "Non-Executive Director",
     nationality: "Indian",
-    dateOfAppointment: "2018-03-22",
-    hasInterestInOtherEntities: false,
-    otherEntities: [],
-    companies: [sampleCompanies[2]]
-  }
-];
-
-// Sample Audits
-export const sampleAudits = [
-  {
-    id: uuid(),
-    companyId: sampleCompanies[0].id,
-    auditDetails: {
-      auditType: "Statutory Audit",
-      financialYear: "2022-2023",
-      startDate: "2023-04-01",
-      endDate: "2023-06-15",
-      auditorName: "ABC & Associates",
-      auditorRegistrationNumber: "FRN12345",
-      auditorAddress: "123 Auditor Street, Fort",
-      auditorCity: "Mumbai",
-      remarks: "Clean audit with no major findings"
-    }
+    occupation: "Chartered Accountant",
+    date_of_birth: "1980-08-22",
+    date_of_appointment: "2021-03-15",
+    present_address: "456 Finance Street, Delhi",
+    present_city: "Delhi",
+    present_state: "Delhi",
+    present_country: "India",
+    present_pin_code: "110001",
+    has_interest_in_other_entities: false,
+    other_entities: [],
+    companies: [],
   },
   {
-    id: uuid(),
-    companyId: sampleCompanies[1].id,
-    auditDetails: {
-      auditType: "Internal Audit",
-      financialYear: "2022-2023",
-      startDate: "2023-01-15",
-      endDate: "2023-03-20",
-      auditorName: "XYZ Auditors LLP",
-      auditorRegistrationNumber: "FRN67890",
-      auditorAddress: "456 Audit House, Worli",
-      auditorCity: "Mumbai",
-      remarks: "Minor compliance issues identified and addressed"
-    }
+    id: "dir-3",
+    prefix: "Dr",
+    first_name: "Amit",
+    middle_name: "Singh",
+    last_name: "Verma",
+    din: "11223344",
+    email: "amit.verma@email.com",
+    phone_number: "+91-9988776655",
+    designation: "Chief Executive Officer",
+    designation_category: "Professional",
+    designation_subcategory: "Executive Director",
+    nationality: "Indian",
+    occupation: "Management Professional",
+    date_of_birth: "1978-12-10",
+    date_of_appointment: "2022-01-01",
+    present_address: "789 Corporate Avenue, Bangalore",
+    present_city: "Bangalore",
+    present_state: "Karnataka",
+    present_country: "India",
+    present_pin_code: "560001",
+    has_interest_in_other_entities: true,
+    other_entities: [
+      {
+        id: "entity-2",
+        entity_name: "Tech Ventures LLP",
+        registration_number: "AAB-1234",
+        designation: "Partner",
+        date_of_appointment: "2020-05-15",
+        shareholding_percentage: 15.0,
+        shareholding_amount: 1500000,
+      },
+    ],
+    companies: [],
   },
-  {
-    id: uuid(),
-    companyId: sampleCompanies[2].id,
-    auditDetails: {
-      auditType: "Statutory Audit",
-      financialYear: "2022-2023",
-      startDate: "2023-05-10",
-      endDate: "2023-07-25",
-      auditorName: "PQR & Co.",
-      auditorRegistrationNumber: "FRN54321",
-      auditorAddress: "789 Auditor Complex, Connaught Place",
-      auditorCity: "New Delhi",
-      remarks: "All financial statements found to be in order"
-    }
-  },
-  {
-    id: uuid(),
-    companyId: sampleCompanies[0].id,
-    auditDetails: {
-      auditType: "Tax Audit",
-      financialYear: "2022-2023",
-      startDate: "2023-07-05",
-      endDate: "2023-08-15",
-      auditorName: "ABC & Associates",
-      auditorRegistrationNumber: "FRN12345",
-      auditorAddress: "123 Auditor Street, Fort",
-      auditorCity: "Mumbai",
-      remarks: "Tax compliance verified and confirmed"
-    }
-  }
-];
-
-// Sample Share Capital Members
-export const sampleShareCapitalMembers: ShareCapitalMember[] = [
-  {
-    id: uuid(),
-    authorizedCapital: {
-      capitalType: "Equity",
-      date: "2020-06-15",
-      mode: "Incorporation",
-      numberOfShares: 100000,
-      nominalValuePerShare: 10,
-      nominalAmount: 1000000
-    },
-    issuedCapital: {
-      capitalType: "Equity",
-      description: "Initial issued capital",
-      date: "2020-06-15",
-      mode: "Incorporation",
-      numberOfShares: 50000,
-      nominalValuePerShare: 10,
-      premiumOrDiscountPerShare: 0
-    },
-    subscribedCapital: {
-      isSameAsIssued: true,
-      capitalType: "Equity",
-      description: "Initial subscribed capital",
-      date: "2020-06-15",
-      mode: "Incorporation",
-      numberOfShares: 50000,
-      nominalValuePerShare: 10,
-      premiumOrDiscountPerShare: 0
-    },
-    calledUpCapital: {
-      isSameAsSubscribed: true,
-      capitalType: "Equity",
-      description: "Initial called-up capital",
-      date: "2020-06-15",
-      mode: "Incorporation",
-      numberOfShares: 50000,
-      nominalValuePerShare: 10,
-      amountCalledUpPerShare: 10,
-      premiumOrDiscountPerShare: 0
-    },
-    paidUpCapital: {
-      isSameAsCalledUp: true,
-      capitalType: "Equity",
-      description: "Initial paid-up capital",
-      date: "2020-06-15",
-      mode: "Incorporation",
-      numberOfShares: 50000,
-      nominalValuePerShare: 10,
-      amountPaidUpPerShare: 10,
-      premiumOrDiscountPerShare: 0,
-      srnOfPas3: "R12345678"
-    },
-    memberDetails: {
-      status: "Individual",
-      prefix: "Mr",
-      firstName: "Rajesh",
-      lastName: "Sharma",
-      address: "123 Directors Colony, Juhu, Mumbai - 400049",
-      email: "rajesh.sharma@example.com",
-      phoneNumber: "+91 9876543210",
-      pan: "ABCPS1234D",
-      nationality: "Indian",
-      occupation: "Business Executive",
-      isMinor: false,
-      hasNomination: false
-    },
-    equityDetails: {
-      dateOfBecomingMember: "2020-06-15",
-      nominalValuePerShare: 10,
-      physicalForm: 0,
-      dematForm: 25000,
-      totalShares: 25000,
-      folioNumberDpIdClientId: "IN301330/12345678"
-    }
-  },
-  {
-    id: uuid(),
-    authorizedCapital: {
-      capitalType: "Equity",
-      date: "2019-08-10",
-      mode: "Incorporation",
-      numberOfShares: 200000,
-      nominalValuePerShare: 10,
-      nominalAmount: 2000000
-    },
-    issuedCapital: {
-      capitalType: "Equity",
-      description: "Initial issued capital",
-      date: "2019-08-10",
-      mode: "Incorporation",
-      numberOfShares: 100000,
-      nominalValuePerShare: 10,
-      premiumOrDiscountPerShare: 5
-    },
-    subscribedCapital: {
-      isSameAsIssued: true,
-      capitalType: "Equity",
-      description: "Initial subscribed capital",
-      date: "2019-08-10",
-      mode: "Incorporation",
-      numberOfShares: 100000,
-      nominalValuePerShare: 10,
-      premiumOrDiscountPerShare: 5
-    },
-    calledUpCapital: {
-      isSameAsSubscribed: true,
-      capitalType: "Equity",
-      description: "Initial called-up capital",
-      date: "2019-08-10",
-      mode: "Incorporation",
-      numberOfShares: 100000,
-      nominalValuePerShare: 10,
-      amountCalledUpPerShare: 10,
-      premiumOrDiscountPerShare: 5
-    },
-    paidUpCapital: {
-      isSameAsCalledUp: true,
-      capitalType: "Equity",
-      description: "Initial paid-up capital",
-      date: "2019-08-10",
-      mode: "Incorporation",
-      numberOfShares: 100000,
-      nominalValuePerShare: 10,
-      amountPaidUpPerShare: 10,
-      premiumOrDiscountPerShare: 5,
-      srnOfPas3: "G98765432"
-    },
-    memberDetails: {
-      status: "Individual",
-      prefix: "Ms",
-      firstName: "Priya",
-      lastName: "Patel",
-      address: "456 Directors Avenue, Bandra, Mumbai - 400050",
-      email: "priya.patel@example.com",
-      phoneNumber: "+91 8765432109",
-      pan: "DEFPP5678E",
-      nationality: "Indian",
-      occupation: "Financial Consultant",
-      isMinor: false,
-      hasNomination: true
-    },
-    equityDetails: {
-      dateOfBecomingMember: "2019-08-10",
-      nominalValuePerShare: 10,
-      physicalForm: 5000,
-      dematForm: 30000,
-      totalShares: 35000,
-      folioNumberDpIdClientId: "IN302269/87654321"
-    }
-  },
-  {
-    id: uuid(),
-    authorizedCapital: {
-      capitalType: "Equity",
-      date: "2018-03-22",
-      mode: "Incorporation",
-      numberOfShares: 500000,
-      nominalValuePerShare: 10,
-      nominalAmount: 5000000
-    },
-    issuedCapital: {
-      capitalType: "Equity",
-      description: "Initial issued capital",
-      date: "2018-03-22",
-      mode: "Incorporation",
-      numberOfShares: 300000,
-      nominalValuePerShare: 10,
-      premiumOrDiscountPerShare: 15
-    },
-    subscribedCapital: {
-      isSameAsIssued: true,
-      capitalType: "Equity",
-      description: "Initial subscribed capital",
-      date: "2018-03-22",
-      mode: "Incorporation",
-      numberOfShares: 300000,
-      nominalValuePerShare: 10,
-      premiumOrDiscountPerShare: 15
-    },
-    calledUpCapital: {
-      isSameAsSubscribed: true,
-      capitalType: "Equity",
-      description: "Initial called-up capital",
-      date: "2018-03-22",
-      mode: "Incorporation",
-      numberOfShares: 300000,
-      nominalValuePerShare: 10,
-      amountCalledUpPerShare: 10,
-      premiumOrDiscountPerShare: 15
-    },
-    paidUpCapital: {
-      isSameAsCalledUp: true,
-      capitalType: "Equity",
-      description: "Initial paid-up capital",
-      date: "2018-03-22",
-      mode: "Incorporation",
-      numberOfShares: 300000,
-      nominalValuePerShare: 10,
-      amountPaidUpPerShare: 10,
-      premiumOrDiscountPerShare: 15,
-      srnOfPas3: "D54321098"
-    },
-    memberDetails: {
-      status: "Individual",
-      prefix: "Dr",
-      firstName: "Anil",
-      lastName: "Kapoor",
-      address: "789 Directors Park, Defence Colony, New Delhi - 110024",
-      email: "anil.kapoor@example.com",
-      phoneNumber: "+91 7654321098",
-      pan: "GHIAK8901F",
-      nationality: "Indian",
-      occupation: "Medical Professional",
-      isMinor: false,
-      hasNomination: false
-    },
-    equityDetails: {
-      dateOfBecomingMember: "2018-03-22",
-      nominalValuePerShare: 10,
-      physicalForm: 0,
-      dematForm: 50000,
-      totalShares: 50000,
-      folioNumberDpIdClientId: "IN303719/10293847"
-    }
-  },
-  {
-    id: uuid(),
-    authorizedCapital: {
-      capitalType: "Preference",
-      date: "2021-04-15",
-      mode: "Allotment",
-      numberOfShares: 20000,
-      nominalValuePerShare: 100,
-      nominalAmount: 2000000
-    },
-    issuedCapital: {
-      capitalType: "Preference",
-      description: "Cumulative Preference Shares",
-      date: "2021-04-15",
-      mode: "Allotment",
-      numberOfShares: 15000,
-      nominalValuePerShare: 100,
-      premiumOrDiscountPerShare: 10
-    },
-    subscribedCapital: {
-      isSameAsIssued: true,
-      capitalType: "Preference",
-      description: "Cumulative Preference Shares",
-      date: "2021-04-15",
-      mode: "Allotment",
-      numberOfShares: 15000,
-      nominalValuePerShare: 100,
-      premiumOrDiscountPerShare: 10
-    },
-    calledUpCapital: {
-      isSameAsSubscribed: true,
-      capitalType: "Preference",
-      description: "Cumulative Preference Shares",
-      date: "2021-04-15",
-      mode: "Allotment",
-      numberOfShares: 15000,
-      nominalValuePerShare: 100,
-      amountCalledUpPerShare: 100,
-      premiumOrDiscountPerShare: 10
-    },
-    paidUpCapital: {
-      isSameAsCalledUp: true,
-      capitalType: "Preference",
-      description: "Cumulative Preference Shares",
-      date: "2021-04-15",
-      mode: "Allotment",
-      numberOfShares: 15000,
-      nominalValuePerShare: 100,
-      amountPaidUpPerShare: 100,
-      premiumOrDiscountPerShare: 10,
-      srnOfPas3: "P10293847"
-    },
-    memberDetails: {
-      status: "Body Corporate",
-      prefix: "Mr",
-      firstName: "ABC",
-      lastName: "Investments Ltd",
-      address: "123 Corporate Tower, BKC, Mumbai - 400051",
-      email: "investments@abcgroup.com",
-      phoneNumber: "+91 2222334455",
-      cinRegistrationNumber: "U67890MH2010PTC234567",
-      pan: "AAACI7890G",
-      nationality: "Indian",
-      occupation: "Investment Company",
-      isMinor: false,
-      hasNomination: false
-    },
-    preferenceDetails: {
-      dateOfBecomingMember: "2021-04-15",
-      nominalValuePerShare: 100,
-      physicalForm: 0,
-      dematForm: 15000,
-      totalShares: 15000,
-      folioNumberDpIdClientId: "IN304295/56789012"
-    }
-  }
 ];

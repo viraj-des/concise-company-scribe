@@ -101,8 +101,9 @@ const DirectorList = () => {
       email: directorRow.email,
       phone_number: directorRow.phone_number,
       designation: directorRow.designation,
-      designation_category: directorRow.designation_category,
-      designation_subcategory: directorRow.designation_subcategory,
+      // These fields don't exist in DirectorRow, so we set them as undefined
+      designation_category: undefined,
+      designation_subcategory: undefined,
       nationality: directorRow.nationality,
       occupation: directorRow.occupation,
       date_of_birth: directorRow.date_of_birth,
