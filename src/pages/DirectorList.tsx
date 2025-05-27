@@ -92,7 +92,7 @@ const DirectorList = () => {
       : [];
 
     return {
-      id: directorRow.id,
+      id: directorRow.id, // Ensure id is always present and not optional
       prefix: directorRow.prefix,
       first_name: directorRow.first_name,
       middle_name: directorRow.middle_name,
