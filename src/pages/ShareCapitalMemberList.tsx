@@ -1,294 +1,251 @@
-
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Eye, Edit, Trash2, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { database } from "@/services/database";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { 
+  Users,
+  Calendar, 
+  Edit, 
+  Eye, 
+  Plus, 
+  Search,
+  Trash,
+  Network,
+  Database
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ShareCapitalMember } from "@/types";
+import { database } from "@/services/database";
+import { format } from "date-fns";
 import ShareCapitalMemberView from "@/components/views/ShareCapitalMemberView";
 import ShareCapitalMemberEdit from "@/components/views/ShareCapitalMemberEdit";
-import { Database } from "@/integrations/supabase/types";
-import { toast } from "sonner";
-import { ShareCapitalMember } from "@/types";
-
-// Use Supabase types directly
-type ShareCapitalMemberRow = Database['public']['Tables']['share_capital_members']['Row'];
+import HierarchyView from "@/components/views/HierarchyView";
 
 const ShareCapitalMemberList = () => {
-  const [members, setMembers] = useState<ShareCapitalMemberRow[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [viewMember, setViewMember] = useState<ShareCapitalMember | null>(null);
-  const [editMember, setEditMember] = useState<ShareCapitalMember | null>(null);
-  const [deleteMemberId, setDeleteMemberId] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [members, setMembers] = useState<ShareCapitalMember[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMember, setSelectedMember] = useState<ShareCapitalMember | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'view' | 'edit' | 'hierarchy'>('list');
 
   useEffect(() => {
+    // Load share capital members from database
+    const loadMembers = async () => {
+      try {
+        const data = await database.getShareCapitalMembers();
+        setMembers(data);
+      } catch (error) {
+        console.error("Error loading share capital members:", error);
+      }
+    };
+
     loadMembers();
   }, []);
 
-  const loadMembers = async () => {
-    setIsLoading(true);
-    try {
-      const membersData = await database.getShareCapitalMembers();
-      setMembers(membersData);
-    } catch (error) {
-      console.error("Error loading share capital members:", error);
-      toast.error("Failed to load members");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Filter members based on search term
+  const filteredMembers = members.filter(
+    (member) => 
+      member.memberDetails?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.memberDetails?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${member.memberDetails?.firstName || ""} ${member.memberDetails?.lastName || ""}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  // Transform database row to ShareCapitalMember interface
-  const transformMemberRowToMember = (memberRow: ShareCapitalMemberRow): ShareCapitalMember => {
-    return {
-      id: memberRow.id,
-      authorizedCapital: {
-        capitalType: 'Equity',
-        date: new Date().toISOString().split('T')[0],
-        mode: 'Incorporation',
-        numberOfShares: 0,
-        nominalValuePerShare: memberRow.face_value || 0,
-        nominalAmount: 0,
-      },
-      issuedCapital: {
-        capitalType: 'Equity',
-        description: '',
-        date: new Date().toISOString().split('T')[0],
-        mode: 'Incorporation',
-        numberOfShares: memberRow.shares_held || 0,
-        nominalValuePerShare: memberRow.face_value || 0,
-        premiumOrDiscountPerShare: 0,
-      },
-      subscribedCapital: {
-        isSameAsIssued: true,
-        capitalType: 'Equity',
-        description: '',
-        date: new Date().toISOString().split('T')[0],
-        mode: 'Incorporation',
-        numberOfShares: memberRow.shares_held || 0,
-        nominalValuePerShare: memberRow.face_value || 0,
-        premiumOrDiscountPerShare: 0,
-      },
-      calledUpCapital: {
-        isSameAsSubscribed: true,
-        capitalType: 'Equity',
-        description: '',
-        date: new Date().toISOString().split('T')[0],
-        mode: 'Incorporation',
-        numberOfShares: memberRow.shares_held || 0,
-        nominalValuePerShare: memberRow.face_value || 0,
-        amountCalledUpPerShare: memberRow.face_value || 0,
-        premiumOrDiscountPerShare: 0,
-      },
-      paidUpCapital: {
-        isSameAsCalledUp: true,
-        capitalType: 'Equity',
-        description: '',
-        date: new Date().toISOString().split('T')[0],
-        mode: 'Incorporation',
-        numberOfShares: memberRow.shares_held || 0,
-        nominalValuePerShare: memberRow.face_value || 0,
-        amountPaidUpPerShare: memberRow.face_value || 0,
-        premiumOrDiscountPerShare: 0,
-        srnOfPas3: '',
-      },
-      memberDetails: {
-        status: 'Individual',
-        prefix: 'Mr',
-        firstName: memberRow.name || '',
-        lastName: '',
-        address: memberRow.address || '',
-        email: memberRow.email || '',
-        phoneNumber: memberRow.phone_number || '',
-        pan: memberRow.pan || '',
-        nationality: memberRow.nationality || '',
-        occupation: '',
-        isMinor: false,
-        hasNomination: false,
-      },
-    } as ShareCapitalMember;
-  };
-
-  const handleView = (member: ShareCapitalMemberRow) => {
-    setViewMember(transformMemberRowToMember(member));
-  };
-
-  const handleEdit = (member: ShareCapitalMemberRow) => {
-    setEditMember(transformMemberRowToMember(member));
-  };
-
-  const handleDelete = (id: string) => {
-    setDeleteMemberId(id);
-  };
-
-  const confirmDelete = async () => {
-    if (deleteMemberId) {
+  const handleDeleteMember = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this share capital member?")) {
       try {
-        await database.deleteShareCapitalMember(deleteMemberId);
-        loadMembers();
-        toast.success("Member deleted successfully");
+        await database.deleteShareCapitalMember(id);
+        const updatedMembers = await database.getShareCapitalMembers();
+        setMembers(updatedMembers);
       } catch (error) {
-        console.error("Error deleting member:", error);
-        toast.error("Failed to delete member");
-      } finally {
-        setDeleteMemberId(null);
+        console.error("Error deleting share capital member:", error);
       }
     }
   };
 
-  const cancelDelete = () => {
-    setDeleteMemberId(null);
+  const handleViewMember = (member: ShareCapitalMember) => {
+    setSelectedMember(member);
+    setViewMode('view');
   };
 
-  const closeViewModal = () => {
-    setViewMember(null);
+  const handleEditMember = (member: ShareCapitalMember) => {
+    setSelectedMember(member);
+    setViewMode('edit');
   };
 
-  const closeEditModal = () => {
-    setEditMember(null);
-    loadMembers();
+  const handleBackToList = async () => {
+    setViewMode('list');
+    setSelectedMember(null);
+    // Reload members to get any updates
+    try {
+      const updatedMembers = await database.getShareCapitalMembers();
+      setMembers(updatedMembers);
+    } catch (error) {
+      console.error("Error reloading share capital members:", error);
+    }
   };
+
+  const handleShowHierarchy = () => {
+    setViewMode('hierarchy');
+  };
+
+  const handleLoadSampleData = async () => {
+    try {
+      await database.loadSampleData();
+      // Reload members to get sample data
+      const updatedMembers = await database.getShareCapitalMembers();
+      setMembers(updatedMembers);
+    } catch (error) {
+      console.error("Error loading sample data:", error);
+    }
+  };
+
+  if (viewMode === 'view' && selectedMember) {
+    return (
+      <DashboardLayout>
+        <ShareCapitalMemberView 
+          member={selectedMember} 
+          onBack={handleBackToList}
+          onEdit={() => handleEditMember(selectedMember)}
+        />
+      </DashboardLayout>
+    );
+  }
+
+  if (viewMode === 'edit' && selectedMember) {
+    return (
+      <DashboardLayout>
+        <ShareCapitalMemberEdit 
+          member={selectedMember} 
+          onBack={handleBackToList}
+          onSave={handleBackToList}
+        />
+      </DashboardLayout>
+    );
+  }
+
+  if (viewMode === 'hierarchy') {
+    return (
+      <DashboardLayout>
+        <HierarchyView onBack={handleBackToList} />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Share Capital Members</h1>
-          <Button onClick={() => navigate("/share-capital-members/add")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Member
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Share Capital Members</h1>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleLoadSampleData} className="flex items-center">
+            <Database className="mr-2 h-4 w-4" /> Load Sample Data
           </Button>
+          <Button variant="outline" onClick={handleShowHierarchy} className="flex items-center">
+            <Network className="mr-2 h-4 w-4" /> Hierarchy View
+          </Button>
+          <Link to="/share-capital-members/add">
+            <Button className="flex items-center">
+              <Plus className="mr-2 h-4 w-4" /> Add Member
+            </Button>
+          </Link>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Member List</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="text-center">Loading...</div>
-            ) : members.length === 0 ? (
-              <div className="text-center text-gray-500">
-                No members found. <Button variant="link" onClick={() => navigate("/share-capital-members/add")}>Add your first member</Button>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-2">Name</th>
-                      <th className="text-left p-2">Category</th>
-                      <th className="text-left p-2">Shares Held</th>
-                      <th className="text-left p-2">Holding %</th>
-                      <th className="text-left p-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {members.map((member) => (
-                      <tr key={member.id} className="border-b hover:bg-gray-50">
-                        <td className="p-2">{member.name}</td>
-                        <td className="p-2">{member.category}</td>
-                        <td className="p-2">{member.shares_held}</td>
-                        <td className="p-2">{member.holding_percentage}%</td>
-                        <td className="p-2">
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleView(member)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(member)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleDelete(member.id!)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
-
-      {/* View Member Modal */}
-      <Dialog open={!!viewMember} onOpenChange={() => setViewMember(null)}>
-        <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle>Member Details</DialogTitle>
-          </DialogHeader>
-          {viewMember && (
-            <ShareCapitalMemberView
-              member={viewMember}
-              onBack={closeViewModal}
-              onEdit={() => {
-                closeViewModal();
-                handleEdit(members.find(m => m.id === viewMember.id)!);
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Member Modal */}
-      <Dialog open={!!editMember} onOpenChange={() => setEditMember(null)}>
-        <DialogContent className="sm:max-w-[625px]">
-          <DialogHeader>
-            <DialogTitle>Edit Member</DialogTitle>
-          </DialogHeader>
-          {editMember && (
-            <ShareCapitalMemberEdit
-              member={editMember}
-              onBack={closeEditModal}
-              onSave={closeEditModal}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteMemberId} onOpenChange={() => setDeleteMemberId(null)}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Delete Member</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this member? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end space-x-2">
-            <Button variant="ghost" onClick={cancelDelete}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
-              Delete
-            </Button>
+      
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle>Share Capital Member Registry</CardTitle>
+          <div className="flex items-center mt-2">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search members..." 
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Member Name</TableHead>
+                <TableHead>Type of Capital</TableHead>
+                <TableHead>Number of Shares</TableHead>
+                <TableHead>Member Since</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredMembers.length > 0 ? (
+                filteredMembers.map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center">
+                        <Users className="h-4 w-4 mr-2 text-primary" />
+                        {member.memberDetails?.prefix} {member.memberDetails?.firstName} {member.memberDetails?.middleName} {member.memberDetails?.lastName}
+                      </div>
+                    </TableCell>
+                    <TableCell>{member.authorizedCapital?.capitalType}</TableCell>
+                    <TableCell>{member.equityDetails?.totalShares || 0}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                        {member.equityDetails?.dateOfBecomingMember ? 
+                          format(new Date(member.equityDetails.dateOfBecomingMember), "PPP") : 
+                          "N/A"}
+                      </div>
+                    </TableCell>
+                    <TableCell>{member.memberDetails?.status}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleViewMember(member)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleEditMember(member)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() => handleDeleteMember(member.id || "")}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                    No share capital members found. Add a new member to get started.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </DashboardLayout>
   );
 };

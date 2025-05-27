@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,18 +26,16 @@ import {
 import { Eye, Edit, Trash2, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Company } from "@/types";
 import { database } from "@/services/database";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import CompanyView from "@/components/views/CompanyView";
-import { Database } from "@/integrations/supabase/types";
-
-type CompanyRow = Database['public']['Tables']['companies']['Row'];
 
 const CompanyList = () => {
-  const [companies, setCompanies] = useState<CompanyRow[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewCompany, setViewCompany] = useState<CompanyRow | null>(null);
-  const [editCompany, setEditCompany] = useState<CompanyRow | null>(null);
+  const [viewCompany, setViewCompany] = useState<Company | null>(null);
+  const [editCompany, setEditCompany] = useState<Company | null>(null);
   const [deleteCompanyId, setDeleteCompanyId] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -58,11 +55,11 @@ const CompanyList = () => {
     }
   };
 
-  const handleView = (company: CompanyRow) => {
+  const handleView = (company: Company) => {
     setViewCompany(company);
   };
 
-  const handleEdit = (company: CompanyRow) => {
+  const handleEdit = (company: Company) => {
     setEditCompany(company);
     navigate(`/companies/edit/${company.id}`); // Navigate to the edit page
   };
@@ -203,11 +200,12 @@ const CompanyList = () => {
                 <Input
                   type="text"
                   id="cin"
-                  value={viewCompany.cin || ''}
+                  value={viewCompany.cin}
                   className="col-span-3"
                   readOnly
                 />
               </div>
+              {/* Add more fields as necessary */}
             </div>
           )}
           <DialogFooter>
@@ -249,10 +247,11 @@ const CompanyList = () => {
                 <Input
                   type="text"
                   id="cin"
-                  defaultValue={editCompany.cin || ''}
+                  defaultValue={editCompany.cin}
                   className="col-span-3"
                 />
               </div>
+              {/* Add more editable fields as necessary */}
             </div>
           )}
           <DialogFooter>

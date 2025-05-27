@@ -1,3 +1,4 @@
+
 export interface Company {
   id?: string;
   cin: string;
@@ -86,67 +87,55 @@ export type Prefix = 'Mr' | 'Ms' | 'Mrs' | 'Smt' | 'Dr';
 
 export interface Director {
   id?: string;
-  designation?: string;
-  designation_category?: string;
-  designation_subcategory?: string;
-  din?: string;
-  prefix?: string;
-  first_name?: string;
-  middle_name?: string;
-  last_name?: string;
-  father_name?: string;
-  present_address?: string;
-  present_address_proof_url?: string;
-  present_country?: string;
-  present_state?: string;
-  present_city?: string;
-  present_pin_code?: string;
-  is_permanent_same_as_present?: boolean;
-  permanent_address?: string;
-  permanent_address_proof_url?: string;
-  permanent_country?: string;
-  permanent_state?: string;
-  permanent_city?: string;
-  permanent_pin_code?: string;
-  email?: string;
-  phone_number?: string;
+  designation: Designation;
+  designationCategory: DesignationCategory;
+  designationSubcategory: DesignationSubcategory;
+  din: string;
+  prefix: Prefix;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  fatherName: string;
+  presentAddress: string;
+  presentAddressProofUrl?: string;
+  presentCountry: string;
+  presentState: string;
+  presentCity: string;
+  presentPinCode: string;
+  isPermanentSameAsPresent: boolean;
+  permanentAddress?: string;
+  permanentAddressProofUrl?: string;
+  permanentCountry?: string;
+  permanentState?: string;
+  permanentCity?: string;
+  permanentPinCode?: string;
+  email: string;
+  phoneNumber: string;
   pan?: string;
-  driving_license?: string;
+  drivingLicense?: string;
   passport?: string;
   aadhar?: string;
-  occupation?: string;
-  date_of_birth?: string;
-  nationality?: string;
-  membership_number?: string;
-  practice_number?: string;
-  date_of_appointment?: string;
-  date_of_cessation?: string;
-  has_interest_in_other_entities?: boolean;
-  other_entities?: EntityInterest[];
+  occupation: string;
+  dateOfBirth: string;
+  nationality: string;
+  membershipNumber?: string;
+  practiceNumber?: string;
+  dateOfAppointment: string;
+  dateOfCessation?: string;
+  hasInterestInOtherEntities: boolean;
+  otherEntities?: EntityInterest[];
   companies?: Company[];
-  // Database-only fields that don't have present/permanent prefixes
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  pin_code?: string;
-  company_id?: string;
-  qualification?: string;
-  experience?: string;
-  other_directorships?: string;
-  created_at?: string;
-  updated_at?: string;
 }
 
 export interface EntityInterest {
   id?: string;
-  entity_name: string;
-  registration_number: string;
-  designation: string;
-  date_of_appointment: string;
-  date_of_cessation?: string;
-  shareholding_percentage: number;
-  shareholding_amount: number;
+  entityName: string;
+  registrationNumber: string;
+  designation: Designation;
+  dateOfAppointment: string;
+  dateOfCessation?: string;
+  shareholdingPercentage: number;
+  shareholdingAmount: number;
 }
 
 export interface DirectorCompanyRelation {

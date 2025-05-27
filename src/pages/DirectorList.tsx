@@ -2,33 +2,35 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import {
   Eye,
   Edit,
   Trash2,
   Plus,
+  ArrowLeft,
+  Save,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Director } from "@/types";
 import { database } from "@/services/database";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { toast } from "sonner";
 import DirectorView from "@/components/views/DirectorView";
 import DirectorEdit from "@/components/views/DirectorEdit";
-import { Database } from "@/integrations/supabase/types";
-import { Director, EntityInterest } from "@/types";
-
-type DirectorRow = Database['public']['Tables']['directors']['Row'];
 
 const DirectorList = () => {
-  const [directors, setDirectors] = useState<DirectorRow[]>([]);
+  const [directors, setDirectors] = useState<Director[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewingDirector, setViewingDirector] = useState<Director | null>(null);
   const [editingDirector, setEditingDirector] = useState<Director | null>(null);
@@ -54,89 +56,12 @@ const DirectorList = () => {
     }
   };
 
-  const transformDirectorRowToDirector = (directorRow: DirectorRow): Director => {
-    // Safely parse JSON arrays and provide proper typing
-    const other_entities: EntityInterest[] = Array.isArray(directorRow.other_entities) 
-      ? (directorRow.other_entities as any[]).map((entity: any) => ({
-          id: entity.id || '',
-          entity_name: entity.entity_name || '',
-          registration_number: entity.registration_number || '',
-          designation: entity.designation || '',
-          date_of_appointment: entity.date_of_appointment || '',
-          date_of_cessation: entity.date_of_cessation,
-          shareholding_percentage: entity.shareholding_percentage || 0,
-          shareholding_amount: entity.shareholding_amount || 0,
-        }))
-      : [];
-
-    const companies = Array.isArray(directorRow.companies) 
-      ? (directorRow.companies as any[]).map((company: any) => ({
-          id: company.id || '',
-          name: company.name || '',
-          cin: company.cin || '',
-          category: company.category || '',
-          class: company.class || '',
-          subcategory: company.subcategory || '',
-          incorpDate: company.incorpDate || '',
-          fyStart: company.fyStart || '',
-          fyEnd: company.fyEnd || '',
-          country: company.country || '',
-          state: company.state || '',
-          city: company.city || '',
-          pinCode: company.pinCode || '',
-          rocJurisdiction: company.rocJurisdiction || '',
-          branches: company.branches || [],
-          corporateRelations: company.corporateRelations || [],
-          registrations: company.registrations || { pan: '', tan: '' }
-        }))
-      : [];
-
-    return {
-      id: directorRow.id, // Ensure id is always present and not optional
-      prefix: directorRow.prefix,
-      first_name: directorRow.first_name,
-      middle_name: directorRow.middle_name,
-      last_name: directorRow.last_name,
-      din: directorRow.din,
-      email: directorRow.email,
-      phone_number: directorRow.phone_number,
-      designation: directorRow.designation,
-      designation_category: undefined,
-      designation_subcategory: undefined,
-      nationality: directorRow.nationality,
-      occupation: directorRow.occupation,
-      date_of_birth: directorRow.date_of_birth,
-      date_of_appointment: directorRow.date_of_appointment,
-      date_of_cessation: directorRow.date_of_cessation,
-      present_address: directorRow.address,
-      present_city: directorRow.city,
-      present_state: directorRow.state,
-      present_country: directorRow.country,
-      present_pin_code: directorRow.pin_code,
-      has_interest_in_other_entities: directorRow.has_interest_in_other_entities || false,
-      other_entities,
-      companies,
-      // Include all DirectorRow fields to ensure compatibility
-      address: directorRow.address,
-      city: directorRow.city,
-      state: directorRow.state,
-      country: directorRow.country,
-      pin_code: directorRow.pin_code,
-      company_id: directorRow.company_id,
-      qualification: directorRow.qualification,
-      experience: directorRow.experience,
-      other_directorships: directorRow.other_directorships,
-      created_at: directorRow.created_at,
-      updated_at: directorRow.updated_at,
-    } as Director;
+  const handleView = (director: Director) => {
+    setViewingDirector(director);
   };
 
-  const handleView = (director: DirectorRow) => {
-    setViewingDirector(transformDirectorRowToDirector(director));
-  };
-
-  const handleEdit = (director: DirectorRow) => {
-    setEditingDirector(transformDirectorRowToDirector(director));
+  const handleEdit = (director: Director) => {
+    setEditingDirector(director);
   };
 
   const handleDelete = (id: string) => {
@@ -170,8 +95,8 @@ const DirectorList = () => {
     setEditingDirector(null);
   };
 
-  const getDirectorDisplayName = (director: DirectorRow) => {
-    return `${director.prefix || ''} ${director.first_name} ${director.middle_name || ''} ${director.last_name}`.trim();
+  const getDirectorDisplayName = (director: Director) => {
+    return `${director.prefix} ${director.firstName} ${director.middleName || ''} ${director.lastName}`.trim();
   };
 
   return (
@@ -269,10 +194,7 @@ const DirectorList = () => {
               onBack={closeModal}
               onEdit={() => {
                 closeModal();
-                const originalDirector = directors.find(d => d.id === viewingDirector.id);
-                if (originalDirector) {
-                  handleEdit(originalDirector);
-                }
+                handleEdit(viewingDirector);
               }}
             />
           )}

@@ -25,13 +25,13 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const auditStep2Schema = z.object({
-  start_date: z.string().min(1, "Start date is required"),
-  end_date: z.string().optional(),
-  paid_up_capital: z.string().min(1, "Paid-up capital is required"),
-  reserves_and_surplus: z.string().min(1, "Reserves & surplus is required"),
-  net_worth: z.string().min(1, "Net worth is required"),
-  net_profit: z.string().min(1, "Net profit/loss is required"),
-  amount_of_borrowing: z.string().min(1, "Amount of borrowing is required"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().optional(),
+  paidUpCapital: z.string().min(1, "Paid-up capital is required"),
+  reservesAndSurplus: z.string().min(1, "Reserves & surplus is required"),
+  netWorth: z.string().min(1, "Net worth is required"),
+  netProfit: z.string().min(1, "Net profit/loss is required"),
+  amountOfBorrowing: z.string().min(1, "Amount of borrowing is required"),
   turnover: z.string().min(1, "Turnover is required"),
 });
 
@@ -47,13 +47,13 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
   const form = useForm<FormData>({
     resolver: zodResolver(auditStep2Schema),
     defaultValues: {
-      start_date: defaultValues.start_date || "",
-      end_date: defaultValues.end_date || "",
-      paid_up_capital: defaultValues.paid_up_capital || "",
-      reserves_and_surplus: defaultValues.reserves_and_surplus || "",
-      net_worth: defaultValues.net_worth || "",
-      net_profit: defaultValues.net_profit || "",
-      amount_of_borrowing: defaultValues.amount_of_borrowing || "",
+      startDate: defaultValues.startDate || "",
+      endDate: defaultValues.endDate || "",
+      paidUpCapital: defaultValues.paidUpCapital || "",
+      reservesAndSurplus: defaultValues.reservesAndSurplus || "",
+      netWorth: defaultValues.netWorth || "",
+      netProfit: defaultValues.netProfit || "",
+      amountOfBorrowing: defaultValues.amountOfBorrowing || "",
       turnover: defaultValues.turnover || "",
     },
   });
@@ -73,7 +73,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
-                name="start_date"
+                name="startDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Start Date*</FormLabel>
@@ -114,7 +114,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
 
               <FormField
                 control={form.control}
-                name="end_date"
+                name="endDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>End Date</FormLabel>
@@ -155,7 +155,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
 
               <FormField
                 control={form.control}
-                name="paid_up_capital"
+                name="paidUpCapital"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Paid-Up Capital (₹)*</FormLabel>
@@ -170,7 +170,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
 
               <FormField
                 control={form.control}
-                name="reserves_and_surplus"
+                name="reservesAndSurplus"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Reserves & Surplus (₹)*</FormLabel>
@@ -185,7 +185,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
 
               <FormField
                 control={form.control}
-                name="net_worth"
+                name="netWorth"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Net Worth (₹)*</FormLabel>
@@ -200,7 +200,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
 
               <FormField
                 control={form.control}
-                name="net_profit"
+                name="netProfit"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Net Profit / (Loss) (₹)*</FormLabel>
@@ -215,7 +215,7 @@ const AuditFormStep2 = ({ onNext, onBack, defaultValues = {} }: AuditFormStep2Pr
 
               <FormField
                 control={form.control}
-                name="amount_of_borrowing"
+                name="amountOfBorrowing"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Amount of Borrowing (₹)*</FormLabel>

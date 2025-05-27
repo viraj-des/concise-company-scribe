@@ -32,7 +32,7 @@ type FormData = z.infer<typeof directorStep1Schema>;
 
 interface DirectorFormStep1Props {
   onNext: (data: Partial<Director>) => void;
-  defaultValues?: Partial<FormData>;
+  defaultValues?: Partial<Director>;
 }
 
 const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Props) => {
@@ -40,26 +40,45 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
     resolver: zodResolver(directorStep1Schema),
     defaultValues: {
       designation: defaultValues.designation || "",
-      designation_category: defaultValues.designation_category || "",
-      designation_subcategory: defaultValues.designation_subcategory || "",
+      designationCategory: defaultValues.designationCategory || "",
+      designationSubcategory: defaultValues.designationSubcategory || "",
       din: defaultValues.din || "",
       prefix: defaultValues.prefix || "",
-      first_name: defaultValues.first_name || "",
-      middle_name: defaultValues.middle_name || "",
-      last_name: defaultValues.last_name || "",
-      father_name: defaultValues.father_name || "",
+      firstName: defaultValues.firstName || "",
+      middleName: defaultValues.middleName || "",
+      lastName: defaultValues.lastName || "",
+      fatherName: defaultValues.fatherName || "",
       occupation: defaultValues.occupation || "",
-      date_of_birth: defaultValues.date_of_birth || "",
+      dateOfBirth: defaultValues.dateOfBirth || "",
       nationality: defaultValues.nationality || "Indian",
-      date_of_appointment: defaultValues.date_of_appointment || "",
-      date_of_cessation: defaultValues.date_of_cessation || "",
-      membership_number: defaultValues.membership_number || "",
-      practice_number: defaultValues.practice_number || "",
+      dateOfAppointment: defaultValues.dateOfAppointment || "",
+      dateOfCessation: defaultValues.dateOfCessation || "",
+      membershipNumber: defaultValues.membershipNumber || "",
+      practiceNumber: defaultValues.practiceNumber || "",
     },
   });
 
   const handleSubmit = (data: FormData) => {
-    onNext(data);
+    // Type casting data to the correct type
+    const directorData: Partial<Director> = {
+      designation: data.designation as Designation,
+      designationCategory: data.designationCategory as DesignationCategory,
+      designationSubcategory: data.designationSubcategory as DesignationSubcategory,
+      din: data.din,
+      prefix: data.prefix as Prefix,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      fatherName: data.fatherName,
+      occupation: data.occupation,
+      dateOfBirth: data.dateOfBirth,
+      nationality: data.nationality,
+      dateOfAppointment: data.dateOfAppointment,
+      dateOfCessation: data.dateOfCessation,
+      membershipNumber: data.membershipNumber,
+      practiceNumber: data.practiceNumber,
+    };
+    onNext(directorData);
   };
 
   return (
@@ -108,7 +127,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="designation_category"
+                name="designationCategory"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category of Designation*</FormLabel>
@@ -134,7 +153,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="designation_subcategory"
+                name="designationSubcategory"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Subcategory of Designation*</FormLabel>
@@ -202,7 +221,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="first_name"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>First Name*</FormLabel>
@@ -216,7 +235,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="middle_name"
+                name="middleName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Middle Name</FormLabel>
@@ -230,7 +249,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="last_name"
+                name="lastName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Last Name*</FormLabel>
@@ -244,7 +263,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="father_name"
+                name="fatherName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Father's Name*</FormLabel>
@@ -272,7 +291,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="date_of_birth"
+                name="dateOfBirth"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Date of Birth*</FormLabel>
@@ -300,7 +319,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="date_of_appointment"
+                name="dateOfAppointment"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Date of Appointment*</FormLabel>
@@ -314,7 +333,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="date_of_cessation"
+                name="dateOfCessation"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Date of Cessation</FormLabel>
@@ -328,7 +347,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="membership_number"
+                name="membershipNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Professional Institute Membership Number</FormLabel>
@@ -342,7 +361,7 @@ const DirectorFormStep1 = ({ onNext, defaultValues = {} }: DirectorFormStep1Prop
 
               <FormField
                 control={form.control}
-                name="practice_number"
+                name="practiceNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Certificate of Practice Number</FormLabel>

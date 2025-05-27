@@ -18,11 +18,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Director } from "@/types";
 
 type FormData = z.infer<typeof directorStep3Schema>;
 
 interface DirectorFormStep3Props {
-  onNext: (data: any) => void;
+  onNext: (data: Partial<Director>) => void;
   onBack: () => void;
   defaultValues?: Partial<FormData>;
 }
@@ -32,9 +33,9 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
     resolver: zodResolver(directorStep3Schema),
     defaultValues: {
       email: defaultValues.email || "",
-      phone_number: defaultValues.phone_number || "",
+      phoneNumber: defaultValues.phoneNumber || "",
       pan: defaultValues.pan || "",
-      driving_license: defaultValues.driving_license || "",
+      drivingLicense: defaultValues.drivingLicense || "",
       passport: defaultValues.passport || "",
       aadhar: defaultValues.aadhar || "",
     },
@@ -69,7 +70,7 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
               <FormField
                 control={form.control}
-                name="phone_number"
+                name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone Number*</FormLabel>
@@ -97,7 +98,7 @@ const DirectorFormStep3 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
               <FormField
                 control={form.control}
-                name="driving_license"
+                name="drivingLicense"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Driving License Number</FormLabel>

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Director, EntityInterest } from "@/types";
+import { Designation, Director, EntityInterest } from "@/types";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash } from "lucide-react";
@@ -37,44 +37,44 @@ interface DirectorFormStep4Props {
 const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormStep4Props) => {
   // Initialize entities with properly typed default values
   const [entities, setEntities] = useState<EntityInterest[]>(
-    Array.isArray(defaultValues.other_entities) 
-      ? defaultValues.other_entities as EntityInterest[] 
+    Array.isArray(defaultValues.otherEntities) 
+      ? defaultValues.otherEntities as EntityInterest[] 
       : []
   );
 
   const form = useForm<FormData>({
     resolver: zodResolver(directorStep4Schema),
     defaultValues: {
-      has_interest_in_other_entities: defaultValues.has_interest_in_other_entities || false,
-      other_entities: entities,
+      hasInterestInOtherEntities: defaultValues.hasInterestInOtherEntities || false,
+      otherEntities: entities,
     },
   });
 
   const entityForm = useForm<EntityInterestFormData>({
     resolver: zodResolver(entityInterestSchema),
     defaultValues: {
-      entity_name: "",
-      registration_number: "",
+      entityName: "",
+      registrationNumber: "",
       designation: "",
-      date_of_appointment: "",
-      shareholding_percentage: 0,
-      shareholding_amount: 0,
+      dateOfAppointment: "",
+      shareholdingPercentage: 0,
+      shareholdingAmount: 0,
     },
   });
 
-  const hasInterest = form.watch("has_interest_in_other_entities");
+  const hasInterest = form.watch("hasInterestInOtherEntities");
 
   const addEntity = (data: EntityInterestFormData) => {
     // Ensure all required fields are present and properly typed
     const newEntity: EntityInterest = {
       id: Date.now().toString(),
-      entity_name: data.entity_name,
-      registration_number: data.registration_number,
-      designation: data.designation,
-      date_of_appointment: data.date_of_appointment,
-      date_of_cessation: data.date_of_cessation,
-      shareholding_percentage: data.shareholding_percentage,
-      shareholding_amount: data.shareholding_amount,
+      entityName: data.entityName,
+      registrationNumber: data.registrationNumber,
+      designation: data.designation as Designation,
+      dateOfAppointment: data.dateOfAppointment,
+      dateOfCessation: data.dateOfCessation,
+      shareholdingPercentage: data.shareholdingPercentage,
+      shareholdingAmount: data.shareholdingAmount,
     };
     
     setEntities([...entities, newEntity]);
@@ -86,10 +86,10 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
   };
 
   const handleSubmit = () => {
-    // Using the entities state directly instead of form.getValue("other_entities")
+    // Using the entities state directly instead of form.getValue("otherEntities")
     onNext({
-      has_interest_in_other_entities: form.getValues("has_interest_in_other_entities"),
-      other_entities: entities
+      hasInterestInOtherEntities: form.getValues("hasInterestInOtherEntities"),
+      otherEntities: entities
     });
   };
 
@@ -103,7 +103,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="has_interest_in_other_entities"
+              name="hasInterestInOtherEntities"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
@@ -130,7 +130,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={entityForm.control}
-                        name="entity_name"
+                        name="entityName"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Entity Name*</FormLabel>
@@ -144,7 +144,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                       <FormField
                         control={entityForm.control}
-                        name="registration_number"
+                        name="registrationNumber"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Registration Number*</FormLabel>
@@ -185,7 +185,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                       <FormField
                         control={entityForm.control}
-                        name="date_of_appointment"
+                        name="dateOfAppointment"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Date of Appointment*</FormLabel>
@@ -199,7 +199,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                       <FormField
                         control={entityForm.control}
-                        name="date_of_cessation"
+                        name="dateOfCessation"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Date of Cessation</FormLabel>
@@ -213,7 +213,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                       <FormField
                         control={entityForm.control}
-                        name="shareholding_percentage"
+                        name="shareholdingPercentage"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Shareholding Percentage (%)*</FormLabel>
@@ -232,7 +232,7 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                       <FormField
                         control={entityForm.control}
-                        name="shareholding_amount"
+                        name="shareholdingAmount"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Shareholding Amount (₹)*</FormLabel>
@@ -277,9 +277,9 @@ const DirectorFormStep4 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                         <tbody className="bg-white divide-y divide-gray-200">
                           {entities.map((entity) => (
                             <tr key={entity.id}>
-                              <td className="px-6 py-4 whitespace-nowrap">{entity.entity_name}</td>
+                              <td className="px-6 py-4 whitespace-nowrap">{entity.entityName}</td>
                               <td className="px-6 py-4 whitespace-nowrap">{entity.designation}</td>
-                              <td className="px-6 py-4 whitespace-nowrap">{entity.shareholding_percentage}%</td>
+                              <td className="px-6 py-4 whitespace-nowrap">{entity.shareholdingPercentage}%</td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <Button 
                                   variant="ghost" 

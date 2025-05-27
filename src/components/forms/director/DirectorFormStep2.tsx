@@ -35,31 +35,31 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
   const form = useForm<FormData>({
     resolver: zodResolver(directorStep2Schema),
     defaultValues: {
-      present_address: defaultValues.present_address || "",
-      present_country: defaultValues.present_country || "India",
-      present_state: defaultValues.present_state || "",
-      present_city: defaultValues.present_city || "",
-      present_pin_code: defaultValues.present_pin_code || "",
-      is_permanent_same_as_present: defaultValues.is_permanent_same_as_present || false,
-      permanent_address: defaultValues.permanent_address || "",
-      permanent_country: defaultValues.permanent_country || "",
-      permanent_state: defaultValues.permanent_state || "",
-      permanent_city: defaultValues.permanent_city || "",
-      permanent_pin_code: defaultValues.permanent_pin_code || "",
+      presentAddress: defaultValues.presentAddress || "",
+      presentCountry: defaultValues.presentCountry || "India",
+      presentState: defaultValues.presentState || "",
+      presentCity: defaultValues.presentCity || "",
+      presentPinCode: defaultValues.presentPinCode || "",
+      isPermanentSameAsPresent: defaultValues.isPermanentSameAsPresent || false,
+      permanentAddress: defaultValues.permanentAddress || "",
+      permanentCountry: defaultValues.permanentCountry || "",
+      permanentState: defaultValues.permanentState || "",
+      permanentCity: defaultValues.permanentCity || "",
+      permanentPinCode: defaultValues.permanentPinCode || "",
     },
   });
 
   // Watch for changes to the same address checkbox
-  const sameAsPresent = form.watch("is_permanent_same_as_present");
+  const sameAsPresent = form.watch("isPermanentSameAsPresent");
 
   // Update permanent address fields when checkbox is checked
   useEffect(() => {
     if (sameAsPresent) {
-      form.setValue("permanent_address", form.getValues("present_address"));
-      form.setValue("permanent_country", form.getValues("present_country"));
-      form.setValue("permanent_state", form.getValues("present_state"));
-      form.setValue("permanent_city", form.getValues("present_city"));
-      form.setValue("permanent_pin_code", form.getValues("present_pin_code"));
+      form.setValue("permanentAddress", form.getValues("presentAddress"));
+      form.setValue("permanentCountry", form.getValues("presentCountry"));
+      form.setValue("permanentState", form.getValues("presentState"));
+      form.setValue("permanentCity", form.getValues("presentCity"));
+      form.setValue("permanentPinCode", form.getValues("presentPinCode"));
     }
   }, [sameAsPresent, form]);
 
@@ -80,7 +80,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="present_address"
+                  name="presentAddress"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Present Address*</FormLabel>
@@ -94,7 +94,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                 <FormField
                   control={form.control}
-                  name="present_address_proof_file"
+                  name="presentAddressProofFile"
                   render={({ field: { value, onChange, ...fieldProps } }) => (
                     <FormItem>
                       <FormLabel>Address Proof*</FormLabel>
@@ -118,7 +118,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                 <FormField
                   control={form.control}
-                  name="present_country"
+                  name="presentCountry"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Country*</FormLabel>
@@ -132,7 +132,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                 <FormField
                   control={form.control}
-                  name="present_state"
+                  name="presentState"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>State*</FormLabel>
@@ -146,7 +146,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                 <FormField
                   control={form.control}
-                  name="present_city"
+                  name="presentCity"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>City*</FormLabel>
@@ -160,7 +160,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                 <FormField
                   control={form.control}
-                  name="present_pin_code"
+                  name="presentPinCode"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>PIN Code*</FormLabel>
@@ -175,7 +175,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
               <FormField
                 control={form.control}
-                name="is_permanent_same_as_present"
+                name="isPermanentSameAsPresent"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                     <FormControl>
@@ -200,7 +200,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
-                      name="permanent_address"
+                      name="permanentAddress"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Permanent Address*</FormLabel>
@@ -214,7 +214,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                     <FormField
                       control={form.control}
-                      name="permanent_address_proof_file"
+                      name="permanentAddressProofFile"
                       render={({ field: { value, onChange, ...fieldProps } }) => (
                         <FormItem>
                           <FormLabel>Address Proof*</FormLabel>
@@ -238,7 +238,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                     <FormField
                       control={form.control}
-                      name="permanent_country"
+                      name="permanentCountry"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Country*</FormLabel>
@@ -252,7 +252,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                     <FormField
                       control={form.control}
-                      name="permanent_state"
+                      name="permanentState"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>State*</FormLabel>
@@ -266,7 +266,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                     <FormField
                       control={form.control}
-                      name="permanent_city"
+                      name="permanentCity"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>City*</FormLabel>
@@ -280,7 +280,7 @@ const DirectorFormStep2 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
                     <FormField
                       control={form.control}
-                      name="permanent_pin_code"
+                      name="permanentPinCode"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>PIN Code*</FormLabel>

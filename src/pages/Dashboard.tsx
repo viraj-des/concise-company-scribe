@@ -1,13 +1,9 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import HierarchyView from "@/components/dashboard/HierarchyView";
 import { Building, Users, FileText, AlertCircle } from "lucide-react";
-import { useCompany } from "@/contexts/CompanyContext";
 
 const Dashboard = () => {
-  const { selectedCompany } = useCompany();
-  
   // Mock statistics
   const stats = [
     {
@@ -58,87 +54,75 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          {selectedCompany && (
-            <div className="text-sm text-muted-foreground">
-              Viewing data for: <span className="font-medium">{selectedCompany.name}</span>
+      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {stats.map((stat) => (
+          <Card key={stat.title}>
+            <CardContent className="flex items-center p-6">
+              <div className="p-2 mr-4 bg-primary/10 rounded-full">
+                <stat.icon className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                <div className="flex items-baseline">
+                  <h3 className="text-2xl font-bold">{stat.value}</h3>
+                  <span className={`ml-2 text-xs ${stat.changeType === 'increase' ? 'text-green-500' : 'text-red-500'}`}>
+                    {stat.change}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activities</CardTitle>
+            <CardDescription>Latest actions in the system</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {activities.map((activity) => (
+                <div key={activity.id} className="flex items-start gap-4">
+                  <div className="h-2 w-2 mt-2 rounded-full bg-primary"></div>
+                  <div className="flex-1">
+                    <div className="font-medium">{activity.action}</div>
+                    <div className="text-sm text-muted-foreground">{activity.entity}</div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                      <span>{activity.user}</span>
+                      <span>•</span>
+                      <span>{activity.time}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat) => (
-            <Card key={stat.title}>
-              <CardContent className="flex items-center p-6">
-                <div className="p-2 mr-4 bg-primary/10 rounded-full">
-                  <stat.icon className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                  <div className="flex items-baseline">
-                    <h3 className="text-2xl font-bold">{stat.value}</h3>
-                    <span className={`ml-2 text-xs ${stat.changeType === 'increase' ? 'text-green-500' : 'text-red-500'}`}>
-                      {stat.change}
-                    </span>
+        <Card>
+          <CardHeader>
+            <CardTitle>Upcoming Deadlines</CardTitle>
+            <CardDescription>Compliance deadlines to monitor</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {deadlines.map((deadline) => (
+                <div key={deadline.id} className="flex items-start gap-4">
+                  <div className="h-2 w-2 mt-2 rounded-full bg-orange-500"></div>
+                  <div className="flex-1">
+                    <div className="font-medium">{deadline.task}</div>
+                    <div className="text-sm text-muted-foreground">{deadline.company}</div>
+                    <div className="text-xs text-red-500 mt-1">Due: {deadline.dueDate}</div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Company Hierarchy Section */}
-        <HierarchyView />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activities</CardTitle>
-              <CardDescription>Latest actions in the system</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {activities.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-4">
-                    <div className="h-2 w-2 mt-2 rounded-full bg-primary"></div>
-                    <div className="flex-1">
-                      <div className="font-medium">{activity.action}</div>
-                      <div className="text-sm text-muted-foreground">{activity.entity}</div>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                        <span>{activity.user}</span>
-                        <span>•</span>
-                        <span>{activity.time}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Upcoming Deadlines</CardTitle>
-              <CardDescription>Compliance deadlines to monitor</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {deadlines.map((deadline) => (
-                  <div key={deadline.id} className="flex items-start gap-4">
-                    <div className="h-2 w-2 mt-2 rounded-full bg-orange-500"></div>
-                    <div className="flex-1">
-                      <div className="font-medium">{deadline.task}</div>
-                      <div className="text-sm text-muted-foreground">{deadline.company}</div>
-                      <div className="text-xs text-red-500 mt-1">Due: {deadline.dueDate}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );

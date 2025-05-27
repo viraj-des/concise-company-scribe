@@ -1,53 +1,19 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Building, Users, FileText, Banknote } from "lucide-react";
 import { database } from "@/services/database";
-
-// Use Supabase types directly
-type CompanyRow = {
-  id: string;
-  name: string;
-  cin: string | null;
-  [key: string]: any;
-};
-
-type DirectorRow = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  designation: string | null;
-  company_id: string | null;
-  companies: any;
-  [key: string]: any;
-};
-
-type ShareCapitalMemberRow = {
-  id: string;
-  name: string;
-  shares_held: number | null;
-  company_id: string | null;
-  [key: string]: any;
-};
-
-type AuditRow = {
-  id: string;
-  company_id: string | null;
-  auditor_name: string | null;
-  auditor_type: string | null;
-  [key: string]: any;
-};
+import { Company, Director, ShareCapitalMember } from "@/types";
 
 interface HierarchyViewProps {
   onBack: () => void;
 }
 
 const HierarchyView = ({ onBack }: HierarchyViewProps) => {
-  const [companies, setCompanies] = useState<CompanyRow[]>([]);
-  const [directors, setDirectors] = useState<DirectorRow[]>([]);
-  const [shareCapitalMembers, setShareCapitalMembers] = useState<ShareCapitalMemberRow[]>([]);
-  const [audits, setAudits] = useState<AuditRow[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [directors, setDirectors] = useState<Director[]>([]);
+  const [shareCapitalMembers, setShareCapitalMembers] = useState<ShareCapitalMember[]>([]);
+  const [audits, setAudits] = useState<any[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -59,10 +25,10 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
           database.getAudits()
         ]);
         
-        setCompanies(companiesData as CompanyRow[]);
-        setDirectors(directorsData as DirectorRow[]);
-        setShareCapitalMembers(shareCapitalData as ShareCapitalMemberRow[]);
-        setAudits(auditsData as AuditRow[]);
+        setCompanies(companiesData);
+        setDirectors(directorsData);
+        setShareCapitalMembers(shareCapitalData);
+        setAudits(auditsData);
       } catch (error) {
         console.error("Error loading data:", error);
       }
@@ -73,15 +39,20 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
 
   // Create relationships mapping
   const getDirectorsByCompany = (companyId: string) => {
-    return directors.filter(director => director.company_id === companyId);
+    return directors.filter(director => 
+      director.companies?.some(company => company.id === companyId)
+    );
   };
 
   const getAuditsByCompany = (companyId: string) => {
-    return audits.filter(audit => audit.company_id === companyId);
+    return audits.filter(audit => audit.companyId === companyId);
   };
 
-  const getShareCapitalMembersByCompany = (companyId: string) => {
-    return shareCapitalMembers.filter(member => member.company_id === companyId);
+  const getCompaniesForDirector = (directorId: string) => {
+    const director = directors.find(d => d.id === directorId);
+    return director?.companies?.map(company => {
+      return { ...company, directorDesignation: director.designation };
+    }).filter(Boolean) || [];
   };
 
   return (
@@ -97,9 +68,8 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
       <div className="grid grid-cols-1 gap-6">
         {/* Companies and their relationships */}
         {companies.map((company) => {
-          const companyDirectors = getDirectorsByCompany(company.id);
-          const companyAudits = getAuditsByCompany(company.id);
-          const companyShareMembers = getShareCapitalMembersByCompany(company.id);
+          const companyDirectors = getDirectorsByCompany(company.id!);
+          const companyAudits = getAuditsByCompany(company.id!);
           
           return (
             <Card key={company.id} className="border-l-4 border-l-blue-500">
@@ -107,11 +77,9 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
                 <CardTitle className="flex items-center">
                   <Building className="h-5 w-5 mr-2 text-blue-500" />
                   {company.name || "Unnamed Company"}
-                  {company.cin && (
-                    <span className="ml-2 text-sm text-gray-500">
-                      (CIN: {company.cin})
-                    </span>
-                  )}
+                  <span className="ml-2 text-sm text-gray-500">
+                    (CIN: {company.cin})
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -126,10 +94,8 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
                       <ul className="space-y-1 text-sm">
                         {companyDirectors.map((director) => (
                           <li key={director.id} className="p-2 bg-gray-50 rounded">
-                            {director.first_name} {director.last_name}
-                            {director.designation && (
-                              <span className="text-gray-600"> ({director.designation})</span>
-                            )}
+                            {director.firstName} {director.lastName}
+                            <span className="text-gray-600"> ({director.designation})</span>
                           </li>
                         ))}
                       </ul>
@@ -148,12 +114,10 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
                       <ul className="space-y-1 text-sm">
                         {companyAudits.map((audit) => (
                           <li key={audit.id} className="p-2 bg-gray-50 rounded">
-                            {audit.auditor_name || "Unknown Auditor"}
-                            {audit.auditor_type && (
-                              <span className="text-gray-600 block">
-                                Type: {audit.auditor_type}
-                              </span>
-                            )}
+                            {audit.auditDetails?.auditType || "Unknown Type"}
+                            <span className="text-gray-600 block">
+                              {audit.auditDetails?.financialYear}
+                            </span>
                           </li>
                         ))}
                       </ul>
@@ -166,24 +130,14 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
                   <div>
                     <h4 className="font-semibold mb-2 flex items-center">
                       <Banknote className="h-4 w-4 mr-1" />
-                      Share Capital Members ({companyShareMembers.length})
+                      Share Capital Members
                     </h4>
-                    {companyShareMembers.length > 0 ? (
-                      <ul className="space-y-1 text-sm">
-                        {companyShareMembers.map((member) => (
-                          <li key={member.id} className="p-2 bg-gray-50 rounded">
-                            {member.name}
-                            {member.shares_held && (
-                              <span className="text-gray-600 block">
-                                Shares: {member.shares_held}
-                              </span>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-gray-500 text-sm">No share capital members</p>
-                    )}
+                    <p className="text-sm text-gray-600">
+                      Total Members: {shareCapitalMembers.length}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Total Shares: {shareCapitalMembers.reduce((sum, member) => sum + (member.equityDetails?.totalShares || 0), 0)}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -200,37 +154,25 @@ const HierarchyView = ({ onBack }: HierarchyViewProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {directors.filter(director => {
-              const directorCompanies = companies.filter(company => 
-                directors.some(d => d.id === director.id && d.company_id === company.id)
-              );
-              return directorCompanies.length > 1;
-            }).length > 0 ? (
+            {directors.filter(director => (director.companies?.length || 0) > 1).length > 0 ? (
               <div className="space-y-4">
                 {directors
-                  .filter(director => {
-                    const directorCompanies = companies.filter(company => 
-                      directors.some(d => d.id === director.id && d.company_id === company.id)
-                    );
-                    return directorCompanies.length > 1;
-                  })
+                  .filter(director => (director.companies?.length || 0) > 1)
                   .map((director) => {
-                    const directorCompanies = companies.filter(company => 
-                      directors.some(d => d.id === director.id && d.company_id === company.id)
-                    );
+                    const directorCompanies = getCompaniesForDirector(director.id!);
                     return (
                       <div key={director.id} className="p-4 bg-gray-50 rounded">
                         <h4 className="font-semibold">
-                          {director.first_name} {director.last_name}
+                          {director.firstName} {director.lastName}
                         </h4>
                         <p className="text-sm text-gray-600 mb-2">
                           Affiliated with {directorCompanies.length} companies:
                         </p>
                         <ul className="text-sm space-y-1">
-                          {directorCompanies.map((company) => (
+                          {directorCompanies.map((company: any) => (
                             <li key={company.id} className="flex justify-between">
                               <span>{company.name}</span>
-                              <span className="text-gray-600">({director.designation || 'Director'})</span>
+                              <span className="text-gray-600">({company.directorDesignation})</span>
                             </li>
                           ))}
                         </ul>

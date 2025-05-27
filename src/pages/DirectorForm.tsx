@@ -4,15 +4,13 @@ import { useNavigate } from "react-router-dom";
 import Stepper from "@/components/common/Stepper";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { Card } from "@/components/ui/card";
+import { Director } from "@/types";
 import DirectorFormStep1 from "@/components/forms/director/DirectorFormStep1";
 import DirectorFormStep2 from "@/components/forms/director/DirectorFormStep2";
 import DirectorFormStep3 from "@/components/forms/director/DirectorFormStep3";
 import DirectorFormStep4 from "@/components/forms/director/DirectorFormStep4";
 import DirectorFormStep5 from "@/components/forms/director/DirectorFormStep5";
 import { database } from "@/services/database";
-import { useCompany } from "@/contexts/CompanyContext";
-import { toast } from "sonner";
-import { Database } from "@/integrations/supabase/types";
 
 const steps = [
   "Personal Details",
@@ -22,63 +20,12 @@ const steps = [
   "Company Associations",
 ];
 
-type DirectorInsert = Database['public']['Tables']['directors']['Insert'];
-
-// Use the database schema directly for form data
-interface DirectorFormData {
-  // Personal Details
-  prefix?: string;
-  first_name?: string;
-  middle_name?: string;
-  last_name?: string;
-  din?: string;
-  email?: string;
-  phone_number?: string;
-  designation?: string;
-  designation_category?: string;
-  designation_subcategory?: string;
-  nationality?: string;
-  occupation?: string;
-  date_of_birth?: string;
-  date_of_appointment?: string;
-  date_of_cessation?: string;
-  membership_number?: string;
-  practice_number?: string;
-  
-  // Address fields
-  present_address?: string;
-  present_address_proof_url?: string;
-  present_country?: string;
-  present_state?: string;
-  present_city?: string;
-  present_pin_code?: string;
-  is_permanent_same_as_present?: boolean;
-  permanent_address?: string;
-  permanent_address_proof_url?: string;
-  permanent_country?: string;
-  permanent_state?: string;
-  permanent_city?: string;
-  permanent_pin_code?: string;
-  
-  // Identification
-  pan?: string;
-  driving_license?: string;
-  passport?: string;
-  aadhar?: string;
-  
-  // Additional fields
-  has_interest_in_other_entities?: boolean;
-  other_entities?: any[];
-  companies?: any[];
-}
-
 const DirectorForm = () => {
   const navigate = useNavigate();
-  const { selectedCompany } = useCompany();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<DirectorFormData>({});
+  const [formData, setFormData] = useState<Partial<Director>>({});
 
-  const handleNext = (data: any) => {
+  const handleNext = (data: Partial<Director>) => {
     setFormData((prev) => ({ ...prev, ...data }));
     
     if (currentStep < steps.length) {
@@ -97,53 +44,16 @@ const DirectorForm = () => {
     }
   };
 
-  const handleSubmit = async (data: DirectorFormData) => {
+  const handleSubmit = (data: Partial<Director>) => {
     console.log("Submitting director data:", data);
-    
-    if (!selectedCompany) {
-      toast.error("Please select a company first");
-      return;
-    }
-
-    try {
-      // Transform data to match database schema exactly
-      const directorData: DirectorInsert = {
-        ...data,
-        company_id: selectedCompany.id,
-        // Set address to present_address for compatibility with database
-        address: data.present_address,
-        city: data.present_city,
-        state: data.present_state,
-        country: data.present_country,
-        pin_code: data.present_pin_code,
-        // Ensure required fields
-        first_name: data.first_name || '',
-        last_name: data.last_name || '',
-      };
-
-      await database.createDirector(directorData);
-      navigate("/directors");
-    } catch (error) {
-      console.error("Error creating director:", error);
-      toast.error("Failed to create director");
-    }
+    // Save to database
+    database.createDirector(data);
+    navigate("/directors");
   };
-
-  if (!selectedCompany) {
-    return (
-      <DashboardLayout>
-        <div className="text-center py-8">
-          <h1 className="text-2xl font-bold mb-4">No Company Selected</h1>
-          <p className="text-muted-foreground">Please select a company from the header dropdown to add a director.</p>
-        </div>
-      </DashboardLayout>
-    );
-  }
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold mb-2">Add New Director</h1>
-      <p className="text-muted-foreground mb-6">Adding director to: {selectedCompany.name}</p>
+      <h1 className="text-2xl font-bold mb-6">Add New Director</h1>
 
       <Card className="p-6 mb-6">
         <Stepper steps={steps} currentStep={currentStep} />

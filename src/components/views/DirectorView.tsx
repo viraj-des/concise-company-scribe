@@ -21,7 +21,7 @@ const DirectorView = ({ director, onBack, onEdit }: DirectorViewProps) => {
             Back to List
           </Button>
           <h1 className="text-2xl font-bold">
-            {director.prefix} {director.first_name} {director.middle_name} {director.last_name}
+            {director.prefix} {director.firstName} {director.middleName} {director.lastName}
           </h1>
         </div>
         <Button onClick={onEdit}>
@@ -37,8 +37,8 @@ const DirectorView = ({ director, onBack, onEdit }: DirectorViewProps) => {
           </CardHeader>
           <CardContent className="space-y-2">
             <div><strong>DIN:</strong> {director.din}</div>
-            <div><strong>Father's Name:</strong> {director.father_name}</div>
-            <div><strong>Date of Birth:</strong> {director.date_of_birth ? format(new Date(director.date_of_birth), "PPP") : "N/A"}</div>
+            <div><strong>Father's Name:</strong> {director.fatherName}</div>
+            <div><strong>Date of Birth:</strong> {director.dateOfBirth ? format(new Date(director.dateOfBirth), "PPP") : "N/A"}</div>
             <div><strong>Nationality:</strong> {director.nationality}</div>
             <div><strong>Occupation:</strong> {director.occupation}</div>
           </CardContent>
@@ -50,10 +50,10 @@ const DirectorView = ({ director, onBack, onEdit }: DirectorViewProps) => {
           </CardHeader>
           <CardContent className="space-y-2">
             <div><strong>Email:</strong> {director.email}</div>
-            <div><strong>Phone:</strong> {director.phone_number}</div>
-            <div><strong>Present Address:</strong> {director.present_address}</div>
-            {!director.is_permanent_same_as_present && director.permanent_address && (
-              <div><strong>Permanent Address:</strong> {director.permanent_address}</div>
+            <div><strong>Phone:</strong> {director.phoneNumber}</div>
+            <div><strong>Present Address:</strong> {director.presentAddress}</div>
+            {!director.isPermanentSameAsPresent && director.permanentAddress && (
+              <div><strong>Permanent Address:</strong> {director.permanentAddress}</div>
             )}
           </CardContent>
         </Card>
@@ -64,7 +64,7 @@ const DirectorView = ({ director, onBack, onEdit }: DirectorViewProps) => {
           </CardHeader>
           <CardContent className="space-y-2">
             <div><strong>PAN:</strong> {director.pan}</div>
-            <div><strong>Driving License:</strong> {director.driving_license}</div>
+            <div><strong>Driving License:</strong> {director.drivingLicense}</div>
             <div><strong>Passport:</strong> {director.passport}</div>
             <div><strong>Aadhar:</strong> {director.aadhar}</div>
           </CardContent>
@@ -76,11 +76,11 @@ const DirectorView = ({ director, onBack, onEdit }: DirectorViewProps) => {
           </CardHeader>
           <CardContent className="space-y-2">
             <div><strong>Designation:</strong> {director.designation}</div>
-            <div><strong>Category:</strong> {director.designation_category}</div>
-            <div><strong>Subcategory:</strong> {director.designation_subcategory}</div>
-            <div><strong>Date of Appointment:</strong> {director.date_of_appointment ? format(new Date(director.date_of_appointment), "PPP") : "N/A"}</div>
-            {director.date_of_cessation && (
-              <div><strong>Date of Cessation:</strong> {format(new Date(director.date_of_cessation), "PPP")}</div>
+            <div><strong>Category:</strong> {director.designationCategory}</div>
+            <div><strong>Subcategory:</strong> {director.designationSubcategory}</div>
+            <div><strong>Date of Appointment:</strong> {director.dateOfAppointment ? format(new Date(director.dateOfAppointment), "PPP") : "N/A"}</div>
+            {director.dateOfCessation && (
+              <div><strong>Date of Cessation:</strong> {format(new Date(director.dateOfCessation), "PPP")}</div>
             )}
           </CardContent>
         </Card>
@@ -103,19 +103,19 @@ const DirectorView = ({ director, onBack, onEdit }: DirectorViewProps) => {
           </Card>
         )}
 
-        {director.has_interest_in_other_entities && director.other_entities && director.other_entities.length > 0 && (
+        {director.hasInterestInOtherEntities && director.otherEntities && director.otherEntities.length > 0 && (
           <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle>Other Entity Interests</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {director.other_entities.map((entity, index) => (
+                {director.otherEntities.map((entity, index) => (
                   <div key={index} className="p-3 bg-gray-50 rounded">
-                    <div><strong>Entity:</strong> {entity.entity_name}</div>
-                    <div><strong>Registration Number:</strong> {entity.registration_number}</div>
+                    <div><strong>Entity:</strong> {entity.entityName}</div>
+                    <div><strong>Registration Number:</strong> {entity.registrationNumber}</div>
                     <div><strong>Designation:</strong> {entity.designation}</div>
-                    <div><strong>Shareholding:</strong> {entity.shareholding_percentage}%</div>
+                    <div><strong>Shareholding:</strong> {entity.shareholdingPercentage}%</div>
                   </div>
                 ))}
               </div>

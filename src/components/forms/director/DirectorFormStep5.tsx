@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { directorStep5Schema } from "@/schemas/directorSchema";
@@ -17,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Director } from "@/types";
+import { Designation, Director } from "@/types";
 import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash } from "lucide-react";
@@ -27,10 +26,10 @@ import { database } from "@/services/database";
 type FormData = z.infer<typeof directorStep5Schema>;
 
 interface CompanyAssociation {
-  company_id: string;
+  companyId: string;
   designation: string;
-  date_of_appointment: string;
-  date_of_cessation?: string;
+  dateOfAppointment: string;
+  dateOfCessation?: string;
 }
 
 interface DirectorFormStep5Props {
@@ -40,7 +39,17 @@ interface DirectorFormStep5Props {
 }
 
 const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormStep5Props) => {
-  const [companies, setCompanies] = useState<CompanyAssociation[]>([]);
+  const [companies, setCompanies] = useState<CompanyAssociation[]>(
+    Array.isArray(defaultValues.companies) 
+      ? defaultValues.companies.map(c => ({
+          companyId: c.id || "",
+          designation: c.name || "",
+          dateOfAppointment: new Date().toISOString().split('T')[0],
+          dateOfCessation: undefined
+        }))
+      : []
+  );
+
   const [companyList, setCompanyList] = useState<{id: string, name: string}[]>([]);
   
   useEffect(() => {
@@ -70,10 +79,10 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
 
   const associationForm = useForm({
     defaultValues: {
-      company_id: "",
+      companyId: "",
       designation: "",
-      date_of_appointment: new Date().toISOString().split('T')[0],
-      date_of_cessation: ""
+      dateOfAppointment: new Date().toISOString().split('T')[0],
+      dateOfCessation: ""
     }
   });
 
@@ -87,11 +96,11 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
   };
 
   const handleSubmit = () => {
-    // Convert associations to a simple companies array for the Director interface
+    // We'll transform the company associations to match the Director type
     const associatedCompanies = companies.map(assoc => {
-      const company = companyList.find(c => c.id === assoc.company_id);
+      const company = companyList.find(c => c.id === assoc.companyId);
       return {
-        id: assoc.company_id,
+        id: assoc.companyId,
         name: company?.name || "Unknown Company",
         cin: "",
         category: "",
@@ -131,8 +140,8 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                 <FormItem>
                   <FormLabel>Company*</FormLabel>
                   <Select
-                    onValueChange={(value) => associationForm.setValue("company_id", value)}
-                    value={associationForm.watch("company_id")}
+                    onValueChange={(value) => associationForm.setValue("companyId", value)}
+                    value={associationForm.watch("companyId")}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -176,8 +185,8 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                   <FormLabel>Date of Appointment*</FormLabel>
                   <Input 
                     type="date" 
-                    value={associationForm.watch("date_of_appointment")}
-                    onChange={(e) => associationForm.setValue("date_of_appointment", e.target.value)}
+                    value={associationForm.watch("dateOfAppointment")}
+                    onChange={(e) => associationForm.setValue("dateOfAppointment", e.target.value)}
                   />
                   <FormMessage />
                 </FormItem>
@@ -186,8 +195,8 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                   <FormLabel>Date of Cessation</FormLabel>
                   <Input 
                     type="date" 
-                    value={associationForm.watch("date_of_cessation")}
-                    onChange={(e) => associationForm.setValue("date_of_cessation", e.target.value)}
+                    value={associationForm.watch("dateOfCessation")}
+                    onChange={(e) => associationForm.setValue("dateOfCessation", e.target.value)}
                   />
                   <FormMessage />
                 </FormItem>
@@ -197,7 +206,7 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                   type="button" 
                   onClick={() => {
                     const data = associationForm.getValues();
-                    if (data.company_id && data.designation && data.date_of_appointment) {
+                    if (data.companyId && data.designation && data.dateOfAppointment) {
                       addCompanyAssociation(data);
                     }
                   }}
@@ -223,12 +232,12 @@ const DirectorFormStep5 = ({ onNext, onBack, defaultValues = {} }: DirectorFormS
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {companies.map((association, index) => {
-                        const company = companyList.find(c => c.id === association.company_id);
+                        const company = companyList.find(c => c.id === association.companyId);
                         return (
                           <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap">{company?.name || association.company_id}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{company?.name || association.companyId}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{association.designation}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{new Date(association.date_of_appointment).toLocaleDateString()}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{new Date(association.dateOfAppointment).toLocaleDateString()}</td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <Button 
                                 variant="ghost" 
