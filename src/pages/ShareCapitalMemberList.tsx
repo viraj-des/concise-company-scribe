@@ -18,6 +18,7 @@ import ShareCapitalMemberView from "@/components/views/ShareCapitalMemberView";
 import ShareCapitalMemberEdit from "@/components/views/ShareCapitalMemberEdit";
 import { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
+import { ShareCapitalMember } from "@/types";
 
 // Use Supabase types directly
 type ShareCapitalMemberRow = Database['public']['Tables']['share_capital_members']['Row'];
@@ -25,8 +26,8 @@ type ShareCapitalMemberRow = Database['public']['Tables']['share_capital_members
 const ShareCapitalMemberList = () => {
   const [members, setMembers] = useState<ShareCapitalMemberRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMember, setViewMember] = useState<ShareCapitalMemberRow | null>(null);
-  const [editMember, setEditMember] = useState<ShareCapitalMemberRow | null>(null);
+  const [viewMember, setViewMember] = useState<ShareCapitalMember | null>(null);
+  const [editMember, setEditMember] = useState<ShareCapitalMember | null>(null);
   const [deleteMemberId, setDeleteMemberId] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -47,12 +48,83 @@ const ShareCapitalMemberList = () => {
     }
   };
 
+  // Transform database row to ShareCapitalMember interface
+  const transformMemberRowToMember = (memberRow: ShareCapitalMemberRow): ShareCapitalMember => {
+    return {
+      id: memberRow.id,
+      authorizedCapital: {
+        capitalType: 'Equity',
+        date: new Date().toISOString().split('T')[0],
+        mode: 'Incorporation',
+        numberOfShares: 0,
+        nominalValuePerShare: memberRow.face_value || 0,
+        nominalAmount: 0,
+      },
+      issuedCapital: {
+        capitalType: 'Equity',
+        description: '',
+        date: new Date().toISOString().split('T')[0],
+        mode: 'Incorporation',
+        numberOfShares: memberRow.shares_held || 0,
+        nominalValuePerShare: memberRow.face_value || 0,
+        premiumOrDiscountPerShare: 0,
+      },
+      subscribedCapital: {
+        isSameAsIssued: true,
+        capitalType: 'Equity',
+        description: '',
+        date: new Date().toISOString().split('T')[0],
+        mode: 'Incorporation',
+        numberOfShares: memberRow.shares_held || 0,
+        nominalValuePerShare: memberRow.face_value || 0,
+        premiumOrDiscountPerShare: 0,
+      },
+      calledUpCapital: {
+        isSameAsSubscribed: true,
+        capitalType: 'Equity',
+        description: '',
+        date: new Date().toISOString().split('T')[0],
+        mode: 'Incorporation',
+        numberOfShares: memberRow.shares_held || 0,
+        nominalValuePerShare: memberRow.face_value || 0,
+        amountCalledUpPerShare: memberRow.face_value || 0,
+        premiumOrDiscountPerShare: 0,
+      },
+      paidUpCapital: {
+        isSameAsCalledUp: true,
+        capitalType: 'Equity',
+        description: '',
+        date: new Date().toISOString().split('T')[0],
+        mode: 'Incorporation',
+        numberOfShares: memberRow.shares_held || 0,
+        nominalValuePerShare: memberRow.face_value || 0,
+        amountPaidUpPerShare: memberRow.face_value || 0,
+        premiumOrDiscountPerShare: 0,
+        srnOfPas3: '',
+      },
+      memberDetails: {
+        status: 'Individual',
+        prefix: 'Mr',
+        firstName: memberRow.name || '',
+        lastName: '',
+        address: memberRow.address || '',
+        email: memberRow.email || '',
+        phoneNumber: memberRow.phone_number || '',
+        pan: memberRow.pan || '',
+        nationality: memberRow.nationality || '',
+        occupation: '',
+        isMinor: false,
+        hasNomination: false,
+      },
+    } as ShareCapitalMember;
+  };
+
   const handleView = (member: ShareCapitalMemberRow) => {
-    setViewMember(member);
+    setViewMember(transformMemberRowToMember(member));
   };
 
   const handleEdit = (member: ShareCapitalMemberRow) => {
-    setEditMember(member);
+    setEditMember(transformMemberRowToMember(member));
   };
 
   const handleDelete = (id: string) => {
@@ -175,7 +247,7 @@ const ShareCapitalMemberList = () => {
               onBack={closeViewModal}
               onEdit={() => {
                 closeViewModal();
-                handleEdit(viewMember);
+                handleEdit(members.find(m => m.id === viewMember.id)!);
               }}
             />
           )}

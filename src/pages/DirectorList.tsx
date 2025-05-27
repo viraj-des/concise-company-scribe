@@ -23,14 +23,15 @@ import { toast } from "sonner";
 import DirectorView from "@/components/views/DirectorView";
 import DirectorEdit from "@/components/views/DirectorEdit";
 import { Database } from "@/integrations/supabase/types";
+import { Director } from "@/types";
 
 type DirectorRow = Database['public']['Tables']['directors']['Row'];
 
 const DirectorList = () => {
   const [directors, setDirectors] = useState<DirectorRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewingDirector, setViewingDirector] = useState<DirectorRow | null>(null);
-  const [editingDirector, setEditingDirector] = useState<DirectorRow | null>(null);
+  const [viewingDirector, setViewingDirector] = useState<Director | null>(null);
+  const [editingDirector, setEditingDirector] = useState<Director | null>(null);
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [directorToDeleteId, setDirectorToDeleteId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -53,12 +54,20 @@ const DirectorList = () => {
     }
   };
 
+  const transformDirectorRowToDirector = (directorRow: DirectorRow): Director => {
+    return {
+      ...directorRow,
+      other_entities: Array.isArray(directorRow.other_entities) ? directorRow.other_entities : [],
+      companies: Array.isArray(directorRow.companies) ? directorRow.companies : [],
+    } as Director;
+  };
+
   const handleView = (director: DirectorRow) => {
-    setViewingDirector(director);
+    setViewingDirector(transformDirectorRowToDirector(director));
   };
 
   const handleEdit = (director: DirectorRow) => {
-    setEditingDirector(director);
+    setEditingDirector(transformDirectorRowToDirector(director));
   };
 
   const handleDelete = (id: string) => {
@@ -191,7 +200,7 @@ const DirectorList = () => {
               onBack={closeModal}
               onEdit={() => {
                 closeModal();
-                handleEdit(viewingDirector);
+                handleEdit(directors.find(d => d.id === viewingDirector.id)!);
               }}
             />
           )}

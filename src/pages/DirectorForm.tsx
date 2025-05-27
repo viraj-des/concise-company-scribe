@@ -24,9 +24,9 @@ const steps = [
 
 type DirectorInsert = Database['public']['Tables']['directors']['Insert'];
 
-// Use Supabase types for form data
+// Use the database schema directly for form data
 interface DirectorFormData {
-  // Personal Details - matching database schema
+  // Personal Details
   prefix?: string;
   first_name?: string;
   middle_name?: string;
@@ -35,23 +35,38 @@ interface DirectorFormData {
   email?: string;
   phone_number?: string;
   designation?: string;
+  designation_category?: string;
+  designation_subcategory?: string;
   nationality?: string;
   occupation?: string;
   date_of_birth?: string;
   date_of_appointment?: string;
   date_of_cessation?: string;
+  membership_number?: string;
+  practice_number?: string;
   
-  // Address - matching database schema
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  pin_code?: string;
+  // Address fields
+  present_address?: string;
+  present_address_proof_url?: string;
+  present_country?: string;
+  present_state?: string;
+  present_city?: string;
+  present_pin_code?: string;
+  is_permanent_same_as_present?: boolean;
+  permanent_address?: string;
+  permanent_address_proof_url?: string;
+  permanent_country?: string;
+  permanent_state?: string;
+  permanent_city?: string;
+  permanent_pin_code?: string;
+  
+  // Identification
+  pan?: string;
+  driving_license?: string;
+  passport?: string;
+  aadhar?: string;
   
   // Additional fields
-  qualification?: string;
-  experience?: string;
-  other_directorships?: string;
   has_interest_in_other_entities?: boolean;
   other_entities?: any[];
   companies?: any[];
@@ -95,6 +110,12 @@ const DirectorForm = () => {
       const directorData: DirectorInsert = {
         ...data,
         company_id: selectedCompany.id,
+        // Set address to present_address for compatibility with database
+        address: data.present_address,
+        city: data.present_city,
+        state: data.present_state,
+        country: data.present_country,
+        pin_code: data.present_pin_code,
         // Ensure required fields
         first_name: data.first_name || '',
         last_name: data.last_name || '',
